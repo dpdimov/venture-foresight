@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cone of Plausibility | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --zone-projected: #c05929;
+            --zone-probable: #2b6777;
+            --zone-plausible: #6a7b4a;
+            --zone-possible: #7c5295;
+            --zone-preposterous: #8b5e3c;
+            --preferred-color: #d4a017;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Topic input */
+        .topic-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-1);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto 36px;
+            text-align: center;
+        }
+
+        .topic-section label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-1);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        textarea, input[type="text"], select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-1);
+        }
+
+        textarea { min-height: 60px; }
+
+        /* Layout: SVG left, form right */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            align-items: start;
+        }
+
+        /* SVG Visualization */
+        .viz-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 80px;
+        }
+
+        .viz-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .cone-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .viz-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .legend-star {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+            color: var(--preferred-color);
+        }
+
+        /* Form panel */
+        .form-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Zone sections */
+        .zone-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .zone-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .zone-indicator {
+            width: 4px;
+            height: 36px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .zone-indicator.projected { background: var(--zone-projected); }
+        .zone-indicator.probable { background: var(--zone-probable); }
+        .zone-indicator.plausible { background: var(--zone-plausible); }
+        .zone-indicator.possible { background: var(--zone-possible); }
+        .zone-indicator.preposterous { background: var(--zone-preposterous); }
+
+        .zone-info {
+            flex: 1;
+        }
+
+        .zone-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .zone-name.projected { color: var(--zone-projected); }
+        .zone-name.probable { color: var(--zone-probable); }
+        .zone-name.plausible { color: var(--zone-plausible); }
+        .zone-name.possible { color: var(--zone-possible); }
+        .zone-name.preposterous { color: var(--zone-preposterous); }
+
+        .zone-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .zone-badge {
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .zone-badge.projected { background: var(--zone-projected); }
+        .zone-badge.probable { background: var(--zone-probable); }
+        .zone-badge.plausible { background: var(--zone-plausible); }
+        .zone-badge.possible { background: var(--zone-possible); }
+        .zone-badge.preposterous { background: var(--zone-preposterous); }
+
+        .zone-entries {
+            padding: 16px 20px;
+        }
+
+        .entry-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .entry-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .entry-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .entry-input:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        .small-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .small-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .small-btn.delete:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .add-entry-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .add-entry-btn:hover {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+        }
+
+        /* Preferred Future */
+        .preferred-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--preferred-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .preferred-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(212, 160, 23, 0.05);
+        }
+
+        .preferred-star {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            color: var(--preferred-color);
+        }
+
+        .preferred-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--preferred-color);
+        }
+
+        .preferred-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .preferred-field label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .preferred-field select {
+            max-width: 240px;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 36px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .viz-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+            .main-layout { gap: 24px; }
+            .zone-header { padding: 12px 16px; }
+            .zone-entries { padding: 12px 16px; }
+        }
+
+        /* Print */
+        @media print {
+            .site-nav, .controls-bar, .save-indicator, .add-entry-btn, .small-btn { display: none !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-1); background: none; }
+            .main-layout { grid-template-columns: 1fr; }
+            .viz-panel { position: static; border: 1px solid #ccc; break-inside: avoid; }
+            .topic-section { border: 1px solid #ccc; }
+            .zone-section { break-inside: avoid; border: 1px solid #ccc; }
+            .preferred-section { break-inside: avoid; border: 2px solid var(--preferred-color); }
+            textarea, input[type="text"], select, .entry-input { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/" class="active">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Cone of Plausibility</h1>
+            <p class="subtitle">Map futures across concentric zones, from the most certain projected path to the wildly preposterous, and mark where you want to be</p>
+        </header>
+
+        <!-- Topic -->
+        <div class="topic-section">
+            <label>Topic / Focus</label>
+            <input type="text" id="topic-input" placeholder="What trend, change, or decision are you exploring? e.g. The future of remote work by 2035" oninput="onTopicChange(this.value)">
+        </div>
+
+        <!-- Main layout -->
+        <div class="main-layout">
+            <!-- SVG Visualization -->
+            <div class="viz-panel">
+                <div class="viz-title">Cone Visualization</div>
+                <svg id="cone-svg" class="cone-svg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="viz-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--zone-projected);"></div>Projected</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--zone-probable);"></div>Probable</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--zone-plausible);"></div>Plausible</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--zone-possible);"></div>Possible</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--zone-preposterous);"></div>Preposterous</div>
+                    <div class="legend-item"><svg class="legend-star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#d4a017" stroke="#d4a017" stroke-width="1"/></svg>Preferred</div>
+                </div>
+            </div>
+
+            <!-- Form panel -->
+            <div class="form-panel">
+                <!-- Zone: Projected -->
+                <div class="zone-section" data-zone="projected">
+                    <div class="zone-header">
+                        <div class="zone-indicator projected"></div>
+                        <div class="zone-info">
+                            <div class="zone-name projected">Projected</div>
+                            <div class="zone-desc">Extrapolation of current trends. The default future.</div>
+                        </div>
+                        <span id="badge-projected" class="zone-badge projected">0</span>
+                    </div>
+                    <div class="zone-entries" id="entries-projected"></div>
+                </div>
+
+                <!-- Zone: Probable -->
+                <div class="zone-section" data-zone="probable">
+                    <div class="zone-header">
+                        <div class="zone-indicator probable"></div>
+                        <div class="zone-info">
+                            <div class="zone-name probable">Probable</div>
+                            <div class="zone-desc">Likely to happen based on current conditions.</div>
+                        </div>
+                        <span id="badge-probable" class="zone-badge probable">0</span>
+                    </div>
+                    <div class="zone-entries" id="entries-probable"></div>
+                </div>
+
+                <!-- Zone: Plausible -->
+                <div class="zone-section" data-zone="plausible">
+                    <div class="zone-header">
+                        <div class="zone-indicator plausible"></div>
+                        <div class="zone-info">
+                            <div class="zone-name plausible">Plausible</div>
+                            <div class="zone-desc">Could happen under reasonable conditions.</div>
+                        </div>
+                        <span id="badge-plausible" class="zone-badge plausible">0</span>
+                    </div>
+                    <div class="zone-entries" id="entries-plausible"></div>
+                </div>
+
+                <!-- Zone: Possible -->
+                <div class="zone-section" data-zone="possible">
+                    <div class="zone-header">
+                        <div class="zone-indicator possible"></div>
+                        <div class="zone-info">
+                            <div class="zone-name possible">Possible</div>
+                            <div class="zone-desc">Might happen given certain breakthroughs or changes.</div>
+                        </div>
+                        <span id="badge-possible" class="zone-badge possible">0</span>
+                    </div>
+                    <div class="zone-entries" id="entries-possible"></div>
+                </div>
+
+                <!-- Zone: Preposterous -->
+                <div class="zone-section" data-zone="preposterous">
+                    <div class="zone-header">
+                        <div class="zone-indicator preposterous"></div>
+                        <div class="zone-info">
+                            <div class="zone-name preposterous">Preposterous</div>
+                            <div class="zone-desc">Wild cards. Seems impossible now but can't be fully ruled out.</div>
+                        </div>
+                        <span id="badge-preposterous" class="zone-badge preposterous">0</span>
+                    </div>
+                    <div class="zone-entries" id="entries-preposterous"></div>
+                </div>
+
+                <!-- Preferred Future -->
+                <div class="preferred-section">
+                    <div class="preferred-header">
+                        <span class="preferred-star">&#9733;</span>
+                        <span class="preferred-title">Preferred Future</span>
+                    </div>
+                    <div class="preferred-body">
+                        <div class="preferred-field">
+                            <label>Name</label>
+                            <input type="text" id="preferred-name" placeholder="What do you call your preferred future?" oninput="onPreferredChange()">
+                        </div>
+                        <div class="preferred-field">
+                            <label>Description</label>
+                            <textarea id="preferred-desc" placeholder="Describe the future you want. What does it look like? Why does it matter?" oninput="onPreferredChange()"></textarea>
+                        </div>
+                        <div class="preferred-field">
+                            <label>Which zone does it fall in?</label>
+                            <select id="preferred-zone" onchange="onPreferredChange()">
+                                <option value="">-- Select zone --</option>
+                                <option value="projected">Projected</option>
+                                <option value="probable">Probable</option>
+                                <option value="plausible">Plausible</option>
+                                <option value="possible">Possible</option>
+                                <option value="preposterous">Preposterous</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-cone-of-plausibility';
+    const ZONES = ['projected', 'probable', 'plausible', 'possible', 'preposterous'];
+    const ZONE_COLORS = {
+        projected:    { solid: '#c05929', fill: 'rgba(192, 89, 41, 0.15)' },
+        probable:     { solid: '#2b6777', fill: 'rgba(43, 103, 119, 0.15)' },
+        plausible:    { solid: '#6a7b4a', fill: 'rgba(106, 123, 74, 0.15)' },
+        possible:     { solid: '#7c5295', fill: 'rgba(124, 82, 149, 0.15)' },
+        preposterous: { solid: '#8b5e3c', fill: 'rgba(139, 94, 60, 0.15)' }
+    };
+    const ZONE_LABELS = {
+        projected: 'Projected',
+        probable: 'Probable',
+        plausible: 'Plausible',
+        possible: 'Possible',
+        preposterous: 'Preposterous'
+    };
+
+    // Ring radii (outermost first in drawing order, then inner on top)
+    // Zone index 0 = projected (innermost), 4 = preposterous (outermost)
+    const RING_RADII = [80, 130, 185, 235, 280];
+
+    let data = {
+        topic: '',
+        zones: {
+            projected: [],
+            probable: [],
+            plausible: [],
+            possible: [],
+            preposterous: []
+        },
+        preferred: {
+            name: '',
+            description: '',
+            zone: ''
+        }
+    };
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeXml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // --- Data changes ---
+
+    function onTopicChange(value) {
+        data.topic = value;
+        autoSave();
+        renderSVG();
+    }
+
+    function onPreferredChange() {
+        data.preferred.name = document.getElementById('preferred-name').value;
+        data.preferred.description = document.getElementById('preferred-desc').value;
+        data.preferred.zone = document.getElementById('preferred-zone').value;
+        autoSave();
+        renderSVG();
+    }
+
+    function addEntry(zone) {
+        const entry = { id: generateId(), text: '' };
+        data.zones[zone].push(entry);
+        renderZone(zone);
+        autoSave();
+        renderSVG();
+        // Focus new input
+        setTimeout(() => {
+            const input = document.querySelector(`[data-entry-id="${entry.id}"] .entry-input`);
+            if (input) input.focus();
+        }, 50);
+    }
+
+    function removeEntry(zone, id) {
+        data.zones[zone] = data.zones[zone].filter(e => e.id !== id);
+        renderZone(zone);
+        autoSave();
+        renderSVG();
+    }
+
+    function updateEntry(zone, id, text) {
+        const entry = data.zones[zone].find(e => e.id === id);
+        if (entry) {
+            entry.text = text;
+            autoSave();
+            renderSVG();
+        }
+    }
+
+    // --- Rendering ---
+
+    function renderZone(zone) {
+        const container = document.getElementById('entries-' + zone);
+        const entries = data.zones[zone];
+
+        let html = entries.map(entry => `
+            <div class="entry-item" data-entry-id="${entry.id}">
+                <input class="entry-input" type="text" value="${escapeAttr(entry.text)}"
+                    placeholder="Describe a future in this zone..."
+                    oninput="updateEntry('${zone}', '${entry.id}', this.value)">
+                <button class="small-btn delete" onclick="removeEntry('${zone}', '${entry.id}')" title="Remove">&times;</button>
+            </div>
+        `).join('');
+
+        html += `<button class="add-entry-btn" onclick="addEntry('${zone}')">+ Add entry</button>`;
+        container.innerHTML = html;
+
+        // Update badge
+        document.getElementById('badge-' + zone).textContent = entries.length;
+    }
+
+    function renderAllZones() {
+        ZONES.forEach(zone => renderZone(zone));
+    }
+
+    function renderSVG() {
+        const svg = document.getElementById('cone-svg');
+        const cx = 300;
+        const cy = 300;
+        let content = '';
+
+        // Draw rings from outermost to innermost so inner rings paint on top
+        for (let i = ZONES.length - 1; i >= 0; i--) {
+            const zone = ZONES[i];
+            const r = RING_RADII[i];
+            const colors = ZONE_COLORS[zone];
+
+            content += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${colors.fill}" stroke="${colors.solid}" stroke-width="1.5" opacity="0.9"/>`;
+        }
+
+        // Ring labels
+        for (let i = 0; i < ZONES.length; i++) {
+            const zone = ZONES[i];
+            const r = RING_RADII[i];
+            const colors = ZONE_COLORS[zone];
+            // Position labels along the top of each ring
+            const labelY = cy - r + 16;
+            content += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-family="'Crimson Pro', serif" font-size="12" font-weight="600" fill="${colors.solid}">${ZONE_LABELS[zone]}</text>`;
+        }
+
+        // Entry nodes positioned within each ring
+        for (let i = 0; i < ZONES.length; i++) {
+            const zone = ZONES[i];
+            const entries = data.zones[zone].filter(e => e.text.trim());
+            const colors = ZONE_COLORS[zone];
+
+            if (entries.length === 0) continue;
+
+            // Calculate inner and outer radius for this ring band
+            const innerR = i === 0 ? 0 : RING_RADII[i - 1];
+            const outerR = RING_RADII[i];
+            const midR = (innerR + outerR) / 2;
+
+            entries.forEach((entry, j) => {
+                // Spread entries around the ring, starting from bottom-left going clockwise
+                const startAngle = Math.PI * 0.6;
+                const endAngle = Math.PI * 2.4;
+                const angleSpan = endAngle - startAngle;
+                const angle = startAngle + (angleSpan * (j + 0.5)) / entries.length;
+
+                // Add slight radius variation for visual interest
+                const radiusJitter = (j % 2 === 0 ? 4 : -4);
+                const nodeR = midR + radiusJitter;
+
+                const nx = cx + nodeR * Math.cos(angle);
+                const ny = cy + nodeR * Math.sin(angle);
+
+                // Draw node
+                content += `<circle cx="${nx}" cy="${ny}" r="6" fill="${colors.solid}" opacity="0.7"/>`;
+
+                // Label (truncated)
+                const label = entry.text.length > 18 ? entry.text.substring(0, 16) + '...' : entry.text;
+                const labelAngle = angle % (2 * Math.PI);
+                // Determine text anchor based on position
+                let anchor = 'middle';
+                let offsetX = 0;
+                if (labelAngle > Math.PI * 0.25 && labelAngle < Math.PI * 0.75) {
+                    // Bottom area - center
+                    anchor = 'middle';
+                } else if (labelAngle >= Math.PI * 0.75 && labelAngle <= Math.PI * 1.25) {
+                    // Left side
+                    anchor = 'end';
+                    offsetX = -10;
+                } else if (labelAngle >= Math.PI * 1.75 || labelAngle <= Math.PI * 0.25) {
+                    // Right side
+                    anchor = 'start';
+                    offsetX = 10;
+                }
+
+                content += `<text x="${nx + offsetX}" y="${ny - 10}" text-anchor="${anchor}" font-family="'Source Sans 3', sans-serif" font-size="9" fill="${colors.solid}" font-weight="600">${escapeXml(label)}</text>`;
+            });
+        }
+
+        // Preferred future star marker
+        if (data.preferred.zone && data.preferred.name) {
+            const zoneIndex = ZONES.indexOf(data.preferred.zone);
+            if (zoneIndex >= 0) {
+                const innerR = zoneIndex === 0 ? 0 : RING_RADII[zoneIndex - 1];
+                const outerR = RING_RADII[zoneIndex];
+                const starR = (innerR + outerR) / 2;
+                // Position star at top of the ring
+                const starAngle = -Math.PI / 2 + 0.3;
+                const sx = cx + starR * Math.cos(starAngle);
+                const sy = cy + starR * Math.sin(starAngle);
+
+                // Draw star
+                content += drawStar(sx, sy, 12, 6, 5, '#d4a017');
+
+                // Star label
+                const starLabel = data.preferred.name.length > 20 ? data.preferred.name.substring(0, 18) + '...' : data.preferred.name;
+                content += `<text x="${sx}" y="${sy - 16}" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="10" font-weight="600" fill="#d4a017">${escapeXml(starLabel)}</text>`;
+            }
+        }
+
+        // Center dot with topic text
+        content += `<circle cx="${cx}" cy="${cy}" r="24" fill="white" stroke="#c05929" stroke-width="2"/>`;
+        const topicLabel = data.topic ? (data.topic.length > 12 ? data.topic.substring(0, 10) + '...' : data.topic) : 'Topic';
+        content += `<text x="${cx}" y="${cy + 1}" text-anchor="middle" dominant-baseline="central" font-family="'Crimson Pro', serif" font-size="10" font-weight="600" fill="#1e293b">${escapeXml(topicLabel)}</text>`;
+
+        svg.innerHTML = content;
+    }
+
+    function drawStar(cx, cy, outerR, innerR, points, color) {
+        let path = '';
+        for (let i = 0; i < points * 2; i++) {
+            const angle = (Math.PI * i) / points - Math.PI / 2;
+            const r = i % 2 === 0 ? outerR : innerR;
+            const x = cx + r * Math.cos(angle);
+            const y = cy + r * Math.sin(angle);
+            path += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+        }
+        path += 'Z';
+        return `<path d="${path}" fill="${color}" stroke="${color}" stroke-width="1" opacity="0.9"/>`;
+    }
+
+    // --- Populate form from data ---
+
+    function populateFields() {
+        document.getElementById('topic-input').value = data.topic || '';
+        document.getElementById('preferred-name').value = data.preferred.name || '';
+        document.getElementById('preferred-desc').value = data.preferred.description || '';
+        document.getElementById('preferred-zone').value = data.preferred.zone || '';
+        renderAllZones();
+        renderSVG();
+    }
+
+    // --- Export ---
+
+    function exportPDF() {
+        setTimeout(() => window.print(), 100);
+    }
+
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cone-of-plausibility.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = {
+            topic: '',
+            zones: {
+                projected: [],
+                probable: [],
+                plausible: [],
+                possible: [],
+                preposterous: []
+            },
+            preferred: {
+                name: '',
+                description: '',
+                zone: ''
+            }
+        };
+        localStorage.removeItem(STORAGE_KEY);
+        populateFields();
+    }
+
+    // --- Auto-save ---
+
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('visible');
+            setTimeout(() => indicator.classList.remove('visible'), 1500);
+        }, 500);
+    }
+
+    // --- Load ---
+
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Merge carefully to handle schema changes
+                data.topic = parsed.topic || '';
+                ZONES.forEach(zone => {
+                    data.zones[zone] = (parsed.zones && parsed.zones[zone]) ? parsed.zones[zone] : [];
+                });
+                data.preferred = parsed.preferred || { name: '', description: '', zone: '' };
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+        populateFields();
+    }
+
+    load();
+    </script>
+</body>
+</html>

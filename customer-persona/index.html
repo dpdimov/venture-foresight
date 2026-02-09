@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Persona | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .personas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .personas-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .add-persona-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: var(--accent-2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .add-persona-btn:hover {
+            background: #1f5563;
+        }
+
+        .personas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .persona-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .persona-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .persona-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: background 0.2s;
+        }
+
+        .persona-card-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .persona-card.expanded .persona-card-header {
+            border-bottom-color: var(--border-color);
+        }
+
+        .persona-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .persona-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .persona-header-info h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .persona-header-info .persona-role {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .persona-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .icon-btn.delete:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .expand-icon {
+            transition: transform 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .persona-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .persona-card-body {
+            display: none;
+            padding: 24px;
+        }
+
+        .persona-card.expanded .persona-card-body {
+            display: block;
+        }
+
+        .persona-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .persona-section {
+            margin-bottom: 0;
+        }
+
+        .persona-section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section-label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-label .label-icon {
+            font-size: 0.9rem;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        textarea { min-height: 70px; }
+        textarea.narrative { min-height: 100px; }
+
+        .demo-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .quote-field {
+            position: relative;
+        }
+
+        .quote-field textarea {
+            font-style: italic;
+            padding-left: 28px;
+        }
+
+        .quote-field::before {
+            content: '"';
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            font-size: 1.5rem;
+            color: var(--accent-3);
+            font-family: 'Crimson Pro', serif;
+            line-height: 1;
+            z-index: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible {
+            opacity: 1;
+        }
+
+        /* Colors for persona avatars */
+        .avatar-0 { background: var(--accent-1); }
+        .avatar-1 { background: var(--accent-2); }
+        .avatar-2 { background: var(--accent-4); }
+        .avatar-3 { background: var(--accent-5); }
+        .avatar-4 { background: var(--accent-3); }
+
+        @media (max-width: 768px) {
+            .persona-grid {
+                grid-template-columns: 1fr;
+            }
+            .demo-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+            .persona-card-header { padding: 14px 18px; }
+            .persona-card-body { padding: 18px; }
+        }
+
+        @media print {
+            .site-nav, .actions-bar, .save-indicator, .personas-header, .icon-btn, .expand-icon { display: none !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-2); background: none; }
+            .persona-card { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; }
+            .persona-card-body { display: block !important; }
+            .persona-card-header { cursor: default; border-bottom-color: var(--border-color); }
+            textarea, input[type="text"] { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+            .persona-grid { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/" class="active">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Customer Persona</h1>
+            <p class="subtitle">Develop concrete illustrations of your main customers — their goals, frustrations, and behaviours</p>
+        </header>
+
+        <div class="personas-header">
+            <span id="personas-count" class="personas-count"></span>
+            <button class="add-persona-btn" onclick="addPersona()">+ Add Persona</button>
+        </div>
+
+        <div id="personas-list" class="personas-list"></div>
+
+        <div class="actions-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-customer-personas';
+
+    let personas = [];
+    let expandedIds = new Set();
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function createEmptyPersona() {
+        return {
+            id: generateId(),
+            name: '',
+            role: '',
+            demographics: '',
+            goals: '',
+            frustrations: '',
+            behaviors: '',
+            dayInLife: '',
+            quotes: ''
+        };
+    }
+
+    function addPersona() {
+        const persona = createEmptyPersona();
+        personas.push(persona);
+        expandedIds.add(persona.id);
+        render();
+        autoSave();
+    }
+
+    function removePersona(id) {
+        if (!confirm('Remove this persona?')) return;
+        personas = personas.filter(p => p.id !== id);
+        expandedIds.delete(id);
+        render();
+        autoSave();
+    }
+
+    function toggleExpand(id) {
+        if (expandedIds.has(id)) {
+            expandedIds.delete(id);
+        } else {
+            expandedIds.add(id);
+        }
+        render();
+    }
+
+    function getInitials(name) {
+        if (!name) return '?';
+        return name.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+    }
+
+    function escapeAttr(str) {
+        return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function updateField(id, field, value) {
+        const p = personas.find(p => p.id === id);
+        if (p) {
+            p[field] = value;
+            // Update header display for name/role changes
+            if (field === 'name' || field === 'role') {
+                const card = document.querySelector(`[data-persona-id="${id}"]`);
+                if (card) {
+                    const nameEl = card.querySelector('.persona-name-display');
+                    const roleEl = card.querySelector('.persona-role');
+                    const avatarEl = card.querySelector('.persona-avatar');
+                    if (field === 'name') {
+                        nameEl.textContent = value || 'Unnamed Persona';
+                        avatarEl.textContent = getInitials(value);
+                    }
+                    if (field === 'role') {
+                        roleEl.textContent = value || 'No role defined';
+                    }
+                }
+            }
+            autoSave();
+        }
+    }
+
+    function render() {
+        const list = document.getElementById('personas-list');
+        const countEl = document.getElementById('personas-count');
+
+        countEl.textContent = personas.length === 0 ? '' : `${personas.length} persona${personas.length !== 1 ? 's' : ''}`;
+
+        if (personas.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <h3>No personas yet</h3>
+                    <p>Click "Add Persona" to start building your first customer persona.</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = personas.map((p, i) => {
+            const expanded = expandedIds.has(p.id);
+            const avatarClass = `avatar-${i % 5}`;
+
+            return `
+            <div class="persona-card ${expanded ? 'expanded' : ''}" data-persona-id="${p.id}">
+                <div class="persona-card-header" onclick="toggleExpand('${p.id}')">
+                    <div class="persona-header-left">
+                        <div class="persona-avatar ${avatarClass}">${getInitials(p.name)}</div>
+                        <div class="persona-header-info">
+                            <h3 class="persona-name-display">${escapeHtml(p.name) || 'Unnamed Persona'}</h3>
+                            <div class="persona-role">${escapeHtml(p.role) || 'No role defined'}</div>
+                        </div>
+                    </div>
+                    <div class="persona-header-actions">
+                        <button class="icon-btn delete" onclick="event.stopPropagation(); removePersona('${p.id}')" title="Delete persona">🗑</button>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                </div>
+                <div class="persona-card-body">
+                    <div class="persona-grid">
+                        <div class="persona-section">
+                            <div class="section-label"><span class="label-icon">🏷</span> Name</div>
+                            <input type="text" value="${escapeAttr(p.name)}" placeholder="e.g. Sarah Chen"
+                                oninput="updateField('${p.id}', 'name', this.value)">
+                        </div>
+                        <div class="persona-section">
+                            <div class="section-label"><span class="label-icon">💼</span> Role / Title</div>
+                            <input type="text" value="${escapeAttr(p.role)}" placeholder="e.g. Head of Product at a B2B SaaS company"
+                                oninput="updateField('${p.id}', 'role', this.value)">
+                        </div>
+                        <div class="persona-section full-width">
+                            <div class="section-label"><span class="label-icon">📊</span> Demographic Snapshot</div>
+                            <textarea placeholder="Age range, location, education, company size, industry..."
+                                oninput="updateField('${p.id}', 'demographics', this.value)">${escapeHtml(p.demographics)}</textarea>
+                        </div>
+                        <div class="persona-section">
+                            <div class="section-label"><span class="label-icon">🎯</span> Goals & Motivations</div>
+                            <textarea placeholder="What are they trying to achieve? What drives their decisions?"
+                                oninput="updateField('${p.id}', 'goals', this.value)">${escapeHtml(p.goals)}</textarea>
+                        </div>
+                        <div class="persona-section">
+                            <div class="section-label"><span class="label-icon">😤</span> Frustrations & Pain Points</div>
+                            <textarea placeholder="What obstacles do they face? What annoys them about current solutions?"
+                                oninput="updateField('${p.id}', 'frustrations', this.value)">${escapeHtml(p.frustrations)}</textarea>
+                        </div>
+                        <div class="persona-section full-width">
+                            <div class="section-label"><span class="label-icon">🛒</span> Behavioural Traits</div>
+                            <textarea placeholder="How do they research, evaluate, and decide? What channels do they use? What influences their buying decisions?"
+                                oninput="updateField('${p.id}', 'behaviors', this.value)">${escapeHtml(p.behaviors)}</textarea>
+                        </div>
+                        <div class="persona-section full-width">
+                            <div class="section-label"><span class="label-icon">📅</span> A Day in the Life</div>
+                            <textarea class="narrative" placeholder="Describe a typical day for this persona — when do they encounter the problem? What's their workflow?"
+                                oninput="updateField('${p.id}', 'dayInLife', this.value)">${escapeHtml(p.dayInLife)}</textarea>
+                        </div>
+                        <div class="persona-section full-width">
+                            <div class="section-label"><span class="label-icon">💬</span> Quotes — What Would They Say?</div>
+                            <div class="quote-field">
+                                <textarea placeholder="I wish there was a way to... / The hardest part of my job is... / I can never find..."
+                                    oninput="updateField('${p.id}', 'quotes', this.value)">${escapeHtml(p.quotes)}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function exportPDF() {
+        // Expand all cards for printing
+        personas.forEach(p => expandedIds.add(p.id));
+        render();
+        setTimeout(() => window.print(), 100);
+    }
+
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(personas, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'customer-personas.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all personas? This cannot be undone.')) return;
+        personas = [];
+        expandedIds.clear();
+        localStorage.removeItem(STORAGE_KEY);
+        render();
+    }
+
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(personas));
+        }, 500);
+    }
+
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                personas = JSON.parse(saved);
+            } catch (e) {
+                console.warn('Failed to load saved personas');
+            }
+        }
+        render();
+    }
+
+    load();
+    </script>
+</body>
+</html>

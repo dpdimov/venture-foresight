@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causal Layered Analysis | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Topic input */
+        .topic-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-2);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto 36px;
+            text-align: center;
+        }
+
+        .topic-section label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-2);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        textarea { min-height: 70px; }
+
+        /* Main layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            align-items: start;
+        }
+
+        /* SVG visualization */
+        .viz-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .viz-panel svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Layer sections panel */
+        .layers-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .layer-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            position: relative;
+        }
+
+        .layer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .layer-section.layer-litany::before { background: var(--accent-2); }
+        .layer-section.layer-systemic::before { background: var(--accent-4); }
+        .layer-section.layer-worldview::before { background: var(--accent-5); }
+        .layer-section.layer-myth::before { background: var(--accent-1); }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .layer-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .layer-litany .layer-number { background: var(--accent-2); }
+        .layer-systemic .layer-number { background: var(--accent-4); }
+        .layer-worldview .layer-number { background: var(--accent-5); }
+        .layer-myth .layer-number { background: var(--accent-1); }
+
+        .layer-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .layer-litany .layer-title { color: var(--accent-2); }
+        .layer-systemic .layer-title { color: var(--accent-4); }
+        .layer-worldview .layer-title { color: var(--accent-5); }
+        .layer-myth .layer-title { color: var(--accent-1); }
+
+        .layer-question {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            padding-left: 42px;
+            font-style: italic;
+        }
+
+        .layer-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .layer-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .layer-item textarea {
+            flex: 1;
+            min-height: 56px;
+            font-size: 0.9rem;
+            background: var(--bg-secondary);
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            line-height: 1;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .remove-btn:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .add-item-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-litany .add-item-btn:hover { border-color: var(--accent-2); color: var(--accent-2); }
+        .layer-systemic .add-item-btn:hover { border-color: var(--accent-4); color: var(--accent-4); }
+        .layer-worldview .add-item-btn:hover { border-color: var(--accent-5); color: var(--accent-5); }
+        .layer-myth .add-item-btn:hover { border-color: var(--accent-1); color: var(--accent-1); }
+
+        /* Alternative Future section */
+        .alternative-section {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--accent-3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 36px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .alternative-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .alternative-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .alternative-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent-3);
+        }
+
+        .alternative-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            padding-left: 42px;
+        }
+
+        .alternative-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .alternative-field label {
+            font-family: 'Crimson Pro', serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--accent-3);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .alternative-field textarea {
+            min-height: 80px;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 36px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .viz-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+            .layer-question { padding-left: 0; }
+            .alternative-description { padding-left: 0; }
+        }
+
+        /* Print styles */
+        @media print {
+            .site-nav, .controls-bar, .save-indicator, .add-item-btn, .remove-btn { display: none !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-2); background: none; }
+            .main-layout { grid-template-columns: 1fr 1fr; gap: 20px; }
+            .viz-panel { position: static; border: 1px solid #ccc; }
+            .layer-section { break-inside: avoid; border: 1px solid #ddd; }
+            .alternative-section { break-inside: avoid; border: 1px solid #ddd; }
+            .topic-section { border: 1px solid #ccc; }
+            textarea, input[type="text"] { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/" class="active">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Causal Layered Analysis</h1>
+            <p class="subtitle">Examine issues through four progressively deeper layers to create more holistic understanding and genuinely alternative futures</p>
+        </header>
+
+        <!-- Topic -->
+        <div class="topic-section">
+            <label>Topic / Issue Being Analyzed</label>
+            <input type="text" id="topic-input" placeholder="e.g. The future of urban transportation" oninput="updateTopic(this.value)">
+        </div>
+
+        <!-- Main layout: visualization + layers -->
+        <div class="main-layout">
+            <!-- SVG Visualization -->
+            <div class="viz-panel">
+                <svg id="cla-svg" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+
+            <!-- Layer sections -->
+            <div class="layers-panel">
+                <!-- Layer 1: Litany -->
+                <div class="layer-section layer-litany" id="section-litany">
+                    <div class="layer-header">
+                        <div class="layer-number">1</div>
+                        <h2 class="layer-title">Litany</h2>
+                    </div>
+                    <p class="layer-question">What are the observable trends, events, and data?</p>
+                    <div id="litany-items" class="layer-items"></div>
+                    <button class="add-item-btn" onclick="addItem('litany')">+ Add an observation</button>
+                </div>
+
+                <!-- Layer 2: Systemic Causes -->
+                <div class="layer-section layer-systemic" id="section-systemic">
+                    <div class="layer-header">
+                        <div class="layer-number">2</div>
+                        <h2 class="layer-title">Social / Systemic Causes</h2>
+                    </div>
+                    <p class="layer-question">What social, economic, technological, or political structures drive these?</p>
+                    <div id="systemic-items" class="layer-items"></div>
+                    <button class="add-item-btn" onclick="addItem('systemic')">+ Add a systemic cause</button>
+                </div>
+
+                <!-- Layer 3: Worldview -->
+                <div class="layer-section layer-worldview" id="section-worldview">
+                    <div class="layer-header">
+                        <div class="layer-number">3</div>
+                        <h2 class="layer-title">Discourse / Worldview</h2>
+                    </div>
+                    <p class="layer-question">What deeper worldviews, assumptions, or paradigms support these structures?</p>
+                    <div id="worldview-items" class="layer-items"></div>
+                    <button class="add-item-btn" onclick="addItem('worldview')">+ Add a worldview or assumption</button>
+                </div>
+
+                <!-- Layer 4: Myth/Metaphor -->
+                <div class="layer-section layer-myth" id="section-myth">
+                    <div class="layer-header">
+                        <div class="layer-number">4</div>
+                        <h2 class="layer-title">Myth / Metaphor</h2>
+                    </div>
+                    <p class="layer-question">What deep stories, metaphors, or archetypes underlie these worldviews?</p>
+                    <div id="myth-items" class="layer-items"></div>
+                    <button class="add-item-btn" onclick="addItem('myth')">+ Add a myth or metaphor</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alternative Future -->
+        <div class="alternative-section">
+            <div class="alternative-header">
+                <div class="alternative-icon">&#8635;</div>
+                <h2 class="alternative-title">Alternative Future</h2>
+            </div>
+            <p class="alternative-description">Work from the deepest layer back up: propose a new myth/metaphor, then envision the new surface reality it would create.</p>
+            <div class="alternative-fields">
+                <div class="alternative-field">
+                    <label>New Metaphor</label>
+                    <textarea id="new-metaphor" placeholder="What alternative myth, metaphor, or deep story could reshape how we relate to this issue?" oninput="updateAlternative('newMetaphor', this.value)"></textarea>
+                </div>
+                <div class="alternative-field">
+                    <label>Reimagined Litany</label>
+                    <textarea id="reimagined-litany" placeholder="If the deeper layers shifted, what would the new surface reality look like? What would the new headline be?" oninput="updateAlternative('reimaginedLitany', this.value)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-causal-layered-analysis';
+
+    const LAYERS = [
+        { key: 'litany', name: 'Litany', color: '#2b6777', fillColor: 'rgba(43, 103, 119, 0.2)', bandHeight: 70 },
+        { key: 'systemic', name: 'Systemic Causes', color: '#6a7b4a', fillColor: 'rgba(106, 123, 74, 0.2)', bandHeight: 90 },
+        { key: 'worldview', name: 'Worldview', color: '#7c5295', fillColor: 'rgba(124, 82, 149, 0.2)', bandHeight: 100 },
+        { key: 'myth', name: 'Myth / Metaphor', color: '#c05929', fillColor: 'rgba(192, 89, 41, 0.2)', bandHeight: 110 }
+    ];
+
+    let data = {
+        topic: '',
+        litany: [],
+        systemic: [],
+        worldview: [],
+        myth: [],
+        newMetaphor: '',
+        reimaginedLitany: ''
+    };
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeXml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function updateTopic(value) {
+        data.topic = value;
+        autoSave();
+        renderSVG();
+    }
+
+    function updateAlternative(field, value) {
+        data[field] = value;
+        autoSave();
+    }
+
+    function addItem(layerKey) {
+        const item = { id: generateId(), text: '' };
+        data[layerKey].push(item);
+        renderLayer(layerKey);
+        renderSVG();
+        autoSave();
+        setTimeout(() => {
+            const textarea = document.querySelector('[data-item-id="' + item.id + '"] textarea');
+            if (textarea) textarea.focus();
+        }, 50);
+    }
+
+    function removeItem(layerKey, id) {
+        data[layerKey] = data[layerKey].filter(item => item.id !== id);
+        renderLayer(layerKey);
+        renderSVG();
+        autoSave();
+    }
+
+    function updateItemText(layerKey, id, text) {
+        const item = data[layerKey].find(i => i.id === id);
+        if (item) {
+            item.text = text;
+            autoSave();
+            renderSVG();
+        }
+    }
+
+    function renderLayer(layerKey) {
+        const container = document.getElementById(layerKey + '-items');
+        container.innerHTML = data[layerKey].map(item => {
+            const placeholders = {
+                litany: 'Describe an observable trend, event, or data point...',
+                systemic: 'Describe a social, economic, or structural driver...',
+                worldview: 'Describe a worldview, assumption, or paradigm...',
+                myth: 'Describe a deep story, metaphor, or archetype...'
+            };
+            return '<div class="layer-item" data-item-id="' + item.id + '">' +
+                '<textarea placeholder="' + placeholders[layerKey] + '" oninput="updateItemText(\'' + layerKey + '\', \'' + item.id + '\', this.value)">' + escapeHtml(item.text) + '</textarea>' +
+                '<button class="remove-btn" onclick="removeItem(\'' + layerKey + '\', \'' + item.id + '\')" title="Remove">&times;</button>' +
+                '</div>';
+        }).join('');
+    }
+
+    function renderAllLayers() {
+        LAYERS.forEach(l => renderLayer(l.key));
+    }
+
+    // SVG Visualization — Iceberg/strata diagram
+    function renderSVG() {
+        const svg = document.getElementById('cla-svg');
+        const W = 700;
+        const H = 400;
+        const padLeft = 50;
+        const padRight = 20;
+        const padTop = 30;
+        const bandWidth = W - padLeft - padRight;
+
+        // Calculate band Y positions
+        let currentY = padTop;
+        const bands = LAYERS.map(layer => {
+            const band = {
+                key: layer.key,
+                name: layer.name,
+                color: layer.color,
+                fillColor: layer.fillColor,
+                y: currentY,
+                height: layer.bandHeight,
+                count: data[layer.key].length
+            };
+            currentY += layer.bandHeight;
+            return band;
+        });
+
+        const totalHeight = currentY + 10;
+        const waterlineY = padTop + LAYERS[0].bandHeight;
+
+        let s = '';
+
+        // Defs
+        s += '<defs>';
+        s += '<pattern id="water-pattern" patternUnits="userSpaceOnUse" width="20" height="10">';
+        s += '<path d="M0 5 Q5 0 10 5 Q15 10 20 5" fill="none" stroke="rgba(43, 103, 119, 0.15)" stroke-width="1"/>';
+        s += '</pattern>';
+        s += '</defs>';
+
+        // Background hint: above waterline is lighter, below is slightly darker
+        s += '<rect x="' + padLeft + '" y="' + padTop + '" width="' + bandWidth + '" height="' + LAYERS[0].bandHeight + '" fill="rgba(248, 250, 252, 0.5)" rx="8" ry="8"/>';
+
+        // Bands
+        bands.forEach((band, i) => {
+            const isFirst = i === 0;
+            const isLast = i === bands.length - 1;
+            const ry = isFirst ? '8' : '0';
+            const ryBottom = isLast ? '8' : '0';
+
+            // Use a path for rounded corners on first/last bands
+            if (isFirst) {
+                s += '<path d="M' + (padLeft + 8) + ',' + band.y +
+                    ' L' + (padLeft + bandWidth - 8) + ',' + band.y +
+                    ' Q' + (padLeft + bandWidth) + ',' + band.y + ' ' + (padLeft + bandWidth) + ',' + (band.y + 8) +
+                    ' L' + (padLeft + bandWidth) + ',' + (band.y + band.height) +
+                    ' L' + padLeft + ',' + (band.y + band.height) +
+                    ' L' + padLeft + ',' + (band.y + 8) +
+                    ' Q' + padLeft + ',' + band.y + ' ' + (padLeft + 8) + ',' + band.y +
+                    ' Z" fill="' + band.fillColor + '" stroke="' + band.color + '" stroke-width="1" stroke-opacity="0.3"/>';
+            } else if (isLast) {
+                s += '<path d="M' + padLeft + ',' + band.y +
+                    ' L' + (padLeft + bandWidth) + ',' + band.y +
+                    ' L' + (padLeft + bandWidth) + ',' + (band.y + band.height - 8) +
+                    ' Q' + (padLeft + bandWidth) + ',' + (band.y + band.height) + ' ' + (padLeft + bandWidth - 8) + ',' + (band.y + band.height) +
+                    ' L' + (padLeft + 8) + ',' + (band.y + band.height) +
+                    ' Q' + padLeft + ',' + (band.y + band.height) + ' ' + padLeft + ',' + (band.y + band.height - 8) +
+                    ' L' + padLeft + ',' + band.y +
+                    ' Z" fill="' + band.fillColor + '" stroke="' + band.color + '" stroke-width="1" stroke-opacity="0.3"/>';
+            } else {
+                s += '<rect x="' + padLeft + '" y="' + band.y + '" width="' + bandWidth + '" height="' + band.height + '" fill="' + band.fillColor + '" stroke="' + band.color + '" stroke-width="1" stroke-opacity="0.3"/>';
+            }
+
+            // Layer name and count
+            var labelY = band.y + band.height / 2;
+            s += '<text x="' + (padLeft + 16) + '" y="' + (labelY - 2) + '" font-family="\'Crimson Pro\', serif" font-size="14" font-weight="600" fill="' + band.color + '" dominant-baseline="middle">' + escapeXml(band.name) + '</text>';
+
+            if (band.count > 0) {
+                s += '<text x="' + (padLeft + 16) + '" y="' + (labelY + 16) + '" font-family="\'Source Sans 3\', sans-serif" font-size="11" fill="' + band.color + '" opacity="0.8">' + band.count + ' entr' + (band.count === 1 ? 'y' : 'ies') + '</text>';
+            }
+
+            // Entry dots
+            var dotStartX = padLeft + 180;
+            var dotAreaWidth = bandWidth - 200;
+            var items = data[band.key];
+            items.forEach(function(item, idx) {
+                var cols = Math.max(1, Math.floor(dotAreaWidth / 28));
+                var col = idx % cols;
+                var row = Math.floor(idx / cols);
+                var cx = dotStartX + col * 28 + 14;
+                var cy = band.y + 20 + row * 24;
+                if (cy + 8 > band.y + band.height) return; // overflow protection
+
+                var r = item.text ? 7 : 5;
+                var opacity = item.text ? 0.7 : 0.35;
+                var title = escapeXml(item.text || '(empty)');
+
+                s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + band.color + '" opacity="' + opacity + '">';
+                s += '<title>' + title + '</title>';
+                s += '</circle>';
+            });
+        });
+
+        // Waterline (dashed line between Litany and Systemic)
+        s += '<line x1="' + (padLeft - 5) + '" y1="' + waterlineY + '" x2="' + (padLeft + bandWidth + 5) + '" y2="' + waterlineY + '" stroke="#2b6777" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.6"/>';
+
+        // Waterline label
+        s += '<text x="' + (padLeft + bandWidth + 8) + '" y="' + (waterlineY - 6) + '" font-family="\'Source Sans 3\', sans-serif" font-size="9" fill="#2b6777" opacity="0.7">visible</text>';
+        s += '<text x="' + (padLeft + bandWidth + 8) + '" y="' + (waterlineY + 12) + '" font-family="\'Source Sans 3\', sans-serif" font-size="9" fill="#2b6777" opacity="0.7">hidden</text>';
+
+        // Vertical arrow on the left
+        var arrowX = padLeft / 2;
+        var arrowTop = padTop + 8;
+        var arrowBottom = currentY - 8;
+
+        // Arrow line
+        s += '<line x1="' + arrowX + '" y1="' + arrowTop + '" x2="' + arrowX + '" y2="' + arrowBottom + '" stroke="#94a3b8" stroke-width="1.5"/>';
+
+        // Arrow head at top
+        s += '<polygon points="' + arrowX + ',' + arrowTop + ' ' + (arrowX - 4) + ',' + (arrowTop + 8) + ' ' + (arrowX + 4) + ',' + (arrowTop + 8) + '" fill="#94a3b8"/>';
+
+        // Arrow head at bottom
+        s += '<polygon points="' + arrowX + ',' + arrowBottom + ' ' + (arrowX - 4) + ',' + (arrowBottom - 8) + ' ' + (arrowX + 4) + ',' + (arrowBottom - 8) + '" fill="#94a3b8"/>';
+
+        // "Surface" label at top
+        s += '<text x="' + arrowX + '" y="' + (arrowTop - 6) + '" text-anchor="middle" font-family="\'Source Sans 3\', sans-serif" font-size="10" fill="#94a3b8" font-weight="600">Surface</text>';
+
+        // "Deep" label at bottom
+        s += '<text x="' + arrowX + '" y="' + (arrowBottom + 16) + '" text-anchor="middle" font-family="\'Source Sans 3\', sans-serif" font-size="10" fill="#94a3b8" font-weight="600">Deep</text>';
+
+        // Topic label at the very top
+        if (data.topic) {
+            s += '<text x="' + (W / 2) + '" y="16" text-anchor="middle" font-family="\'Source Sans 3\', sans-serif" font-size="12" fill="#64748b">' + escapeXml(data.topic.length > 65 ? data.topic.substring(0, 65) + '...' : data.topic) + '</text>';
+        }
+
+        svg.innerHTML = s;
+    }
+
+    // Auto-save with debounce
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(function() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            var indicator = document.getElementById('save-indicator');
+            indicator.classList.add('visible');
+            setTimeout(function() { indicator.classList.remove('visible'); }, 2000);
+        }, 500);
+    }
+
+    // Export functions
+    function exportPDF() {
+        window.print();
+    }
+
+    function exportJSON() {
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'causal-layered-analysis.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = {
+            topic: '',
+            litany: [],
+            systemic: [],
+            worldview: [],
+            myth: [],
+            newMetaphor: '',
+            reimaginedLitany: ''
+        };
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('topic-input').value = '';
+        document.getElementById('new-metaphor').value = '';
+        document.getElementById('reimagined-litany').value = '';
+        renderAllLayers();
+        renderSVG();
+    }
+
+    // Load
+    function load() {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                var parsed = JSON.parse(saved);
+                data = {
+                    topic: parsed.topic || '',
+                    litany: Array.isArray(parsed.litany) ? parsed.litany : [],
+                    systemic: Array.isArray(parsed.systemic) ? parsed.systemic : [],
+                    worldview: Array.isArray(parsed.worldview) ? parsed.worldview : [],
+                    myth: Array.isArray(parsed.myth) ? parsed.myth : [],
+                    newMetaphor: parsed.newMetaphor || '',
+                    reimaginedLitany: parsed.reimaginedLitany || ''
+                };
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+        document.getElementById('topic-input').value = data.topic;
+        document.getElementById('new-metaphor').value = data.newMetaphor;
+        document.getElementById('reimagined-litany').value = data.reimaginedLitany;
+        renderAllLayers();
+        renderSVG();
+    }
+
+    load();
+    </script>
+</body>
+</html>

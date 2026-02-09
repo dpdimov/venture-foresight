@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem-Solution Fit | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .canvas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            position: relative;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .panel.problem::before { background: var(--accent-1); }
+        .panel.solution::before { background: var(--accent-2); }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .panel-icon { font-size: 1.5rem; }
+
+        .panel-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .panel.problem .panel-title { color: var(--accent-1); }
+        .panel.solution .panel-title { color: var(--accent-2); }
+
+        .field-group { margin-bottom: 24px; }
+        .field-group:last-child { margin-bottom: 0; }
+
+        .field-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        textarea { min-height: 80px; }
+
+        .list-section { margin-bottom: 24px; }
+
+        .list-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            background: var(--bg-tertiary);
+            padding: 12px 14px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .list-item .item-number {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            min-width: 20px;
+            padding-top: 2px;
+        }
+
+        .list-item .item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .list-item input[type="text"],
+        .list-item textarea {
+            background: var(--bg-secondary);
+        }
+
+        .list-item textarea { min-height: 44px; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-btn:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .add-btn:hover {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+            background: rgba(43, 103, 119, 0.05);
+        }
+
+        /* Slider styles */
+        .slider-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slider-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .slider-value {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .slider-track {
+            position: relative;
+            height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .slider-pain-urgency input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-1));
+        }
+        .slider-pain-urgency input[type="range"]::-webkit-slider-thumb { background: var(--accent-1); }
+        .slider-pain-urgency input[type="range"]::-moz-range-thumb { background: var(--accent-1); }
+
+        .slider-pain-addressed input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-3));
+        }
+        .slider-pain-addressed input[type="range"]::-webkit-slider-thumb { background: var(--accent-3); }
+        .slider-pain-addressed input[type="range"]::-moz-range-thumb { background: var(--accent-3); }
+
+        .slider-comp-effectiveness input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-2));
+        }
+        .slider-comp-effectiveness input[type="range"]::-webkit-slider-thumb { background: var(--accent-2); }
+        .slider-comp-effectiveness input[type="range"]::-moz-range-thumb { background: var(--accent-2); }
+
+        .slider-comp-advantage input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-4));
+        }
+        .slider-comp-advantage input[type="range"]::-webkit-slider-thumb { background: var(--accent-4); }
+        .slider-comp-advantage input[type="range"]::-moz-range-thumb { background: var(--accent-4); }
+
+        .slider-endpoints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: -2px;
+        }
+
+        /* Diagnostic maps */
+        .diagnostic-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .diagnostic-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .diagnostic-title.pain { color: var(--accent-1); }
+        .diagnostic-title.solution { color: var(--accent-2); }
+
+        .diagnostic-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .diagnostic-maps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .map-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-empty {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        /* Mapping section */
+        .mapping-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+
+        .mapping-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-3);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mapping-component {
+            background: rgba(43, 103, 119, 0.08);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent-2);
+        }
+
+        .mapping-arrow {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .mapping-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .mapping-empty {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .canvas { grid-template-columns: 1fr; }
+            .diagnostic-maps { grid-template-columns: 1fr; }
+            .mapping-grid { grid-template-columns: 1fr; gap: 8px; }
+            .mapping-arrow { transform: rotate(90deg); }
+            .slider-row { grid-template-columns: 1fr; gap: 8px; }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+        }
+
+        @media print {
+            .site-nav, .actions-bar, .save-indicator, .add-btn, .remove-btn { display: none !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-1); background: none; }
+            .canvas { gap: 20px; }
+            .panel { break-inside: avoid; border: 1px solid #ccc; }
+            .mapping-section, .diagnostic-section { break-inside: avoid; border: 1px solid #ccc; }
+            textarea, input[type="text"] { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+            .list-item { background: none; border-bottom: 1px solid #eee; border-radius: 0; padding: 8px 0; }
+            .mapping-select { border: none; background: none; -webkit-appearance: none; appearance: none; }
+            input[type="range"] { -webkit-appearance: none; height: 4px; }
+            .map-container { max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/" class="active">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Problem-Solution Fit</h1>
+            <p class="subtitle">Define a market problem clearly, then outline the solution blueprint that addresses it</p>
+        </header>
+
+        <div class="canvas">
+            <!-- Problem Panel -->
+            <div class="panel problem">
+                <div class="panel-header">
+                    <span class="panel-icon">⚠️</span>
+                    <h2 class="panel-title">Problem Definition</h2>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Market Context</label>
+                    <textarea id="market-context" placeholder="Describe the market landscape and the broader context of the problem..."></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Who Is Affected?</label>
+                    <textarea id="who-affected" placeholder="Describe the target audience experiencing this problem..."></textarea>
+                </div>
+
+                <div class="field-group list-section">
+                    <label class="field-label">Specific Pain Points</label>
+                    <div id="pain-points-list"></div>
+                    <button class="add-btn" onclick="addPainPoint()">+ Add Pain Point</button>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Current Alternatives & Shortcomings</label>
+                    <textarea id="alternatives" placeholder="What do people currently use? Why are those alternatives insufficient?"></textarea>
+                </div>
+            </div>
+
+            <!-- Solution Panel -->
+            <div class="panel solution">
+                <div class="panel-header">
+                    <span class="panel-icon">💡</span>
+                    <h2 class="panel-title">Solution Blueprint</h2>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Value Proposition</label>
+                    <textarea id="value-proposition" placeholder="What is the core value your solution delivers?"></textarea>
+                </div>
+
+                <div class="field-group list-section">
+                    <label class="field-label">Key Components</label>
+                    <div id="components-list"></div>
+                    <button class="add-btn" onclick="addComponent()">+ Add Component</button>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Differentiation from Alternatives</label>
+                    <textarea id="differentiation" placeholder="How is this fundamentally different from existing alternatives?"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagnostic Maps -->
+        <div class="diagnostic-maps">
+            <div class="diagnostic-section">
+                <h3 class="diagnostic-title pain">Pain Point Landscape</h3>
+                <p class="diagnostic-subtitle">Where do pain points sit in terms of urgency vs. existing market solutions?</p>
+                <div id="pain-map-container"></div>
+            </div>
+            <div class="diagnostic-section">
+                <h3 class="diagnostic-title solution">Solution Component Strength</h3>
+                <p class="diagnostic-subtitle">How effective is each component, and how differentiated from alternatives?</p>
+                <div id="comp-map-container"></div>
+            </div>
+        </div>
+
+        <!-- Mapping Section -->
+        <div class="mapping-section">
+            <h3 class="mapping-title">🔗 Problem → Solution Mapping</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                For each solution component, select which pain point it primarily addresses.
+            </p>
+            <div id="mapping-area" class="mapping-grid"></div>
+        </div>
+
+        <div class="actions-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-problem-solution-fit';
+
+    const PAIN_URGENCY_LABELS = ['Nice to have', 'Helpful', 'Important', 'Very pressing', 'Critical'];
+    const PAIN_ADDRESSED_LABELS = ['Unaddressed', 'Poorly served', 'Partially served', 'Mostly served', 'Well served'];
+    const COMP_EFFECTIVENESS_LABELS = ['Marginal fix', 'Partial fix', 'Good fix', 'Strong fix', 'Complete solution'];
+    const COMP_ADVANTAGE_LABELS = ['No clear edge', 'Slight edge', 'Moderate edge', 'Clear advantage', 'Strong advantage'];
+
+    let data = {
+        marketContext: '',
+        whoAffected: '',
+        painPoints: [],
+        alternatives: '',
+        valueProposition: '',
+        components: [],
+        differentiation: '',
+        mappings: {}
+    };
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function addPainPoint(text) {
+        const id = generateId();
+        data.painPoints.push({ id, text: text || '', urgency: 3, addressed: 3 });
+        renderPainPoints();
+        renderMappings();
+        renderMaps();
+        autoSave();
+    }
+
+    function removePainPoint(id) {
+        data.painPoints = data.painPoints.filter(p => p.id !== id);
+        Object.keys(data.mappings).forEach(k => {
+            if (data.mappings[k] === id) delete data.mappings[k];
+        });
+        renderPainPoints();
+        renderMappings();
+        renderMaps();
+        autoSave();
+    }
+
+    function addComponent(name, description) {
+        const id = generateId();
+        data.components.push({ id, name: name || '', description: description || '', effectiveness: 3, advantage: 3 });
+        renderComponents();
+        renderMappings();
+        renderMaps();
+        autoSave();
+    }
+
+    function removeComponent(id) {
+        data.components = data.components.filter(c => c.id !== id);
+        delete data.mappings[id];
+        renderComponents();
+        renderMappings();
+        renderMaps();
+        autoSave();
+    }
+
+    function updatePainSlider(index, field, value) {
+        data.painPoints[index][field] = parseInt(value);
+        renderMaps();
+        autoSave();
+    }
+
+    function updateCompSlider(index, field, value) {
+        data.components[index][field] = parseInt(value);
+        renderMaps();
+        autoSave();
+    }
+
+    function renderPainPoints() {
+        const container = document.getElementById('pain-points-list');
+        container.innerHTML = data.painPoints.map((p, i) => `
+            <div class="list-item">
+                <span class="item-number">${i + 1}.</span>
+                <div class="item-content">
+                    <textarea placeholder="Describe this pain point..."
+                        oninput="data.painPoints[${i}].text = this.value; autoSave();">${p.text}</textarea>
+                    <div class="slider-row">
+                        <div class="slider-group slider-pain-urgency">
+                            <div class="slider-header">
+                                <span class="slider-label">Urgency</span>
+                                <span class="slider-value" id="pain-urgency-val-${i}">${PAIN_URGENCY_LABELS[(p.urgency || 3) - 1]}</span>
+                            </div>
+                            <div class="slider-track">
+                                <input type="range" min="1" max="5" value="${p.urgency || 3}"
+                                    oninput="updatePainSlider(${i}, 'urgency', this.value); document.getElementById('pain-urgency-val-${i}').textContent = PAIN_URGENCY_LABELS[this.value - 1];">
+                            </div>
+                            <div class="slider-endpoints"><span>Nice to have</span><span>Critical</span></div>
+                        </div>
+                        <div class="slider-group slider-pain-addressed">
+                            <div class="slider-header">
+                                <span class="slider-label">Market Coverage</span>
+                                <span class="slider-value" id="pain-addressed-val-${i}">${PAIN_ADDRESSED_LABELS[(p.addressed || 3) - 1]}</span>
+                            </div>
+                            <div class="slider-track">
+                                <input type="range" min="1" max="5" value="${p.addressed || 3}"
+                                    oninput="updatePainSlider(${i}, 'addressed', this.value); document.getElementById('pain-addressed-val-${i}').textContent = PAIN_ADDRESSED_LABELS[this.value - 1];">
+                            </div>
+                            <div class="slider-endpoints"><span>Unaddressed</span><span>Well served</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="remove-btn" onclick="removePainPoint('${p.id}')" title="Remove">×</button>
+            </div>
+        `).join('');
+    }
+
+    function renderComponents() {
+        const container = document.getElementById('components-list');
+        container.innerHTML = data.components.map((c, i) => `
+            <div class="list-item">
+                <span class="item-number">${i + 1}.</span>
+                <div class="item-content">
+                    <input type="text" placeholder="Component name" value="${escapeAttr(c.name)}"
+                        oninput="data.components[${i}].name = this.value; renderMappings(); renderMaps(); autoSave();">
+                    <textarea placeholder="How does this component work?"
+                        oninput="data.components[${i}].description = this.value; autoSave();">${c.description}</textarea>
+                    <div class="slider-row">
+                        <div class="slider-group slider-comp-effectiveness">
+                            <div class="slider-header">
+                                <span class="slider-label">Effectiveness</span>
+                                <span class="slider-value" id="comp-effect-val-${i}">${COMP_EFFECTIVENESS_LABELS[(c.effectiveness || 3) - 1]}</span>
+                            </div>
+                            <div class="slider-track">
+                                <input type="range" min="1" max="5" value="${c.effectiveness || 3}"
+                                    oninput="updateCompSlider(${i}, 'effectiveness', this.value); document.getElementById('comp-effect-val-${i}').textContent = COMP_EFFECTIVENESS_LABELS[this.value - 1];">
+                            </div>
+                            <div class="slider-endpoints"><span>Marginal fix</span><span>Complete solution</span></div>
+                        </div>
+                        <div class="slider-group slider-comp-advantage">
+                            <div class="slider-header">
+                                <span class="slider-label">Advantage</span>
+                                <span class="slider-value" id="comp-adv-val-${i}">${COMP_ADVANTAGE_LABELS[(c.advantage || 3) - 1]}</span>
+                            </div>
+                            <div class="slider-track">
+                                <input type="range" min="1" max="5" value="${c.advantage || 3}"
+                                    oninput="updateCompSlider(${i}, 'advantage', this.value); document.getElementById('comp-adv-val-${i}').textContent = COMP_ADVANTAGE_LABELS[this.value - 1];">
+                            </div>
+                            <div class="slider-endpoints"><span>No clear edge</span><span>Strong advantage</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="remove-btn" onclick="removeComponent('${c.id}')" title="Remove">×</button>
+            </div>
+        `).join('');
+    }
+
+    function renderMaps() {
+        renderPainMap();
+        renderCompMap();
+    }
+
+    function renderPainMap() {
+        const container = document.getElementById('pain-map-container');
+        const points = data.painPoints.filter(p => p.text);
+
+        if (points.length === 0) {
+            container.innerHTML = '<div class="map-empty">Add pain points with descriptions to see the landscape map.</div>';
+            return;
+        }
+
+        const size = 320;
+        const pad = 50;
+        const plotSize = size - pad * 2;
+
+        let svg = `<svg class="map-svg" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Background quadrant shading
+        const mid = pad + plotSize / 2;
+        svg += `<rect x="${pad}" y="${pad}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(192,89,41,0.06)" rx="4"/>`;
+        svg += `<rect x="${mid}" y="${pad}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(139,94,60,0.06)" rx="4"/>`;
+        svg += `<rect x="${pad}" y="${mid}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(226,232,240,0.3)" rx="4"/>`;
+        svg += `<rect x="${mid}" y="${mid}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(226,232,240,0.15)" rx="4"/>`;
+
+        // Quadrant labels
+        svg += `<text x="${pad + plotSize * 0.25}" y="${pad + 16}" text-anchor="middle" font-size="8" fill="#c05929" font-weight="600" opacity="0.7">OPPORTUNITY</text>`;
+        svg += `<text x="${pad + plotSize * 0.75}" y="${pad + 16}" text-anchor="middle" font-size="8" fill="#8b5e3c" font-weight="600" opacity="0.7">BATTLEGROUND</text>`;
+        svg += `<text x="${pad + plotSize * 0.25}" y="${mid + 16}" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600" opacity="0.6">LOW PRIORITY</text>`;
+        svg += `<text x="${pad + plotSize * 0.75}" y="${mid + 16}" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600" opacity="0.6">OVERCROWDED</text>`;
+
+        // Axes
+        svg += `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<line x1="${pad}" y1="${pad + plotSize}" x2="${pad + plotSize}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<line x1="${pad}" y1="${mid}" x2="${pad + plotSize}" y2="${mid}" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4 3"/>`;
+        svg += `<line x1="${mid}" y1="${pad}" x2="${mid}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4 3"/>`;
+
+        // Axis labels
+        svg += `<text x="${pad + plotSize / 2}" y="${size - 6}" text-anchor="middle" font-size="9" fill="#8b5e3c" font-weight="600">MARKET COVERAGE →</text>`;
+        svg += `<text x="12" y="${pad + plotSize / 2}" text-anchor="middle" font-size="9" fill="#c05929" font-weight="600" transform="rotate(-90 12 ${pad + plotSize / 2})">URGENCY →</text>`;
+
+        // Tick labels
+        svg += `<text x="${pad}" y="${size - 18}" text-anchor="middle" font-size="7" fill="#94a3b8">Unaddressed</text>`;
+        svg += `<text x="${pad + plotSize}" y="${size - 18}" text-anchor="middle" font-size="7" fill="#94a3b8">Well served</text>`;
+        svg += `<text x="${pad - 6}" y="${pad + plotSize + 4}" text-anchor="end" font-size="7" fill="#94a3b8">Low</text>`;
+        svg += `<text x="${pad - 6}" y="${pad + 4}" text-anchor="end" font-size="7" fill="#94a3b8">High</text>`;
+
+        // Points
+        points.forEach((p, i) => {
+            const x = pad + ((p.addressed || 3) - 1) / 4 * plotSize;
+            const y = pad + plotSize - ((p.urgency || 3) - 1) / 4 * plotSize;
+            const label = truncate(p.text, 18);
+
+            svg += `<circle cx="${x}" cy="${y}" r="8" fill="var(--accent-1)" opacity="0.8"/>`;
+            svg += `<text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="white" font-weight="700">${i + 1}</text>`;
+            svg += `<text x="${x + 12}" y="${y + 3}" font-size="8" fill="var(--text-primary)">${escapeXml(label)}</text>`;
+        });
+
+        svg += '</svg>';
+        container.innerHTML = `<div class="map-container">${svg}</div>`;
+    }
+
+    function renderCompMap() {
+        const container = document.getElementById('comp-map-container');
+        const comps = data.components.filter(c => c.name);
+
+        if (comps.length === 0) {
+            container.innerHTML = '<div class="map-empty">Add named solution components to see the strength map.</div>';
+            return;
+        }
+
+        const size = 320;
+        const pad = 50;
+        const plotSize = size - pad * 2;
+
+        let svg = `<svg class="map-svg" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
+
+        const mid = pad + plotSize / 2;
+
+        // Background quadrant shading
+        svg += `<rect x="${mid}" y="${pad}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(43,103,119,0.06)" rx="4"/>`;
+        svg += `<rect x="${pad}" y="${pad}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(226,232,240,0.2)" rx="4"/>`;
+        svg += `<rect x="${mid}" y="${mid}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(106,123,74,0.06)" rx="4"/>`;
+        svg += `<rect x="${pad}" y="${mid}" width="${plotSize/2}" height="${plotSize/2}" fill="rgba(226,232,240,0.1)" rx="4"/>`;
+
+        // Quadrant labels
+        svg += `<text x="${pad + plotSize * 0.75}" y="${pad + 16}" text-anchor="middle" font-size="8" fill="#2b6777" font-weight="600" opacity="0.7">KEY DIFFERENTIATOR</text>`;
+        svg += `<text x="${pad + plotSize * 0.25}" y="${pad + 16}" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600" opacity="0.6">TABLE STAKES</text>`;
+        svg += `<text x="${pad + plotSize * 0.75}" y="${mid + 16}" text-anchor="middle" font-size="8" fill="#6a7b4a" font-weight="600" opacity="0.6">POSITIONING RISK</text>`;
+        svg += `<text x="${pad + plotSize * 0.25}" y="${mid + 16}" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600" opacity="0.5">RETHINK</text>`;
+
+        // Axes
+        svg += `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<line x1="${pad}" y1="${pad + plotSize}" x2="${pad + plotSize}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<line x1="${pad}" y1="${mid}" x2="${pad + plotSize}" y2="${mid}" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4 3"/>`;
+        svg += `<line x1="${mid}" y1="${pad}" x2="${mid}" y2="${pad + plotSize}" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4 3"/>`;
+
+        // Axis labels
+        svg += `<text x="${pad + plotSize / 2}" y="${size - 6}" text-anchor="middle" font-size="9" fill="#6a7b4a" font-weight="600">ADVANTAGE OVER ALTERNATIVES →</text>`;
+        svg += `<text x="12" y="${pad + plotSize / 2}" text-anchor="middle" font-size="9" fill="#2b6777" font-weight="600" transform="rotate(-90 12 ${pad + plotSize / 2})">EFFECTIVENESS →</text>`;
+
+        // Tick labels
+        svg += `<text x="${pad}" y="${size - 18}" text-anchor="middle" font-size="7" fill="#94a3b8">No edge</text>`;
+        svg += `<text x="${pad + plotSize}" y="${size - 18}" text-anchor="middle" font-size="7" fill="#94a3b8">Strong</text>`;
+        svg += `<text x="${pad - 6}" y="${pad + plotSize + 4}" text-anchor="end" font-size="7" fill="#94a3b8">Low</text>`;
+        svg += `<text x="${pad - 6}" y="${pad + 4}" text-anchor="end" font-size="7" fill="#94a3b8">High</text>`;
+
+        // Points
+        comps.forEach((c, i) => {
+            const x = pad + ((c.advantage || 3) - 1) / 4 * plotSize;
+            const y = pad + plotSize - ((c.effectiveness || 3) - 1) / 4 * plotSize;
+            const label = truncate(c.name, 18);
+
+            svg += `<circle cx="${x}" cy="${y}" r="8" fill="var(--accent-2)" opacity="0.8"/>`;
+            svg += `<text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="white" font-weight="700">${i + 1}</text>`;
+            svg += `<text x="${x + 12}" y="${y + 3}" font-size="8" fill="var(--text-primary)">${escapeXml(label)}</text>`;
+        });
+
+        svg += '</svg>';
+        container.innerHTML = `<div class="map-container">${svg}</div>`;
+    }
+
+    function renderMappings() {
+        const area = document.getElementById('mapping-area');
+
+        if (data.components.length === 0 && data.painPoints.length === 0) {
+            area.innerHTML = '<div class="mapping-empty">Add pain points and solution components to see mapping options.</div>';
+            return;
+        }
+
+        if (data.components.length === 0) {
+            area.innerHTML = '<div class="mapping-empty">Add solution components to create mappings.</div>';
+            return;
+        }
+
+        const painOptions = data.painPoints.map(p =>
+            `<option value="${p.id}">${p.text ? truncate(p.text, 50) : '(empty pain point)'}</option>`
+        ).join('');
+
+        area.innerHTML = data.components.map(c => {
+            const selected = data.mappings[c.id] || '';
+            return `
+                <div class="mapping-component">${c.name || '(unnamed component)'}</div>
+                <div class="mapping-arrow">←</div>
+                <div>
+                    <select class="mapping-select" onchange="data.mappings['${c.id}'] = this.value; autoSave();">
+                        <option value="">— Select pain point —</option>
+                        ${painOptions.replace(`value="${selected}"`, `value="${selected}" selected`)}
+                    </select>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function truncate(str, len) {
+        if (!str) return '';
+        return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    function escapeAttr(str) {
+        return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeXml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function collectFieldData() {
+        data.marketContext = document.getElementById('market-context').value;
+        data.whoAffected = document.getElementById('who-affected').value;
+        data.alternatives = document.getElementById('alternatives').value;
+        data.valueProposition = document.getElementById('value-proposition').value;
+        data.differentiation = document.getElementById('differentiation').value;
+    }
+
+    function populateFields() {
+        document.getElementById('market-context').value = data.marketContext;
+        document.getElementById('who-affected').value = data.whoAffected;
+        document.getElementById('alternatives').value = data.alternatives;
+        document.getElementById('value-proposition').value = data.valueProposition;
+        document.getElementById('differentiation').value = data.differentiation;
+    }
+
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            collectFieldData();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }, 500);
+    }
+
+    function exportPDF() {
+        collectFieldData();
+        window.print();
+    }
+
+    function exportJSON() {
+        collectFieldData();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'problem-solution-fit.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = {
+            marketContext: '', whoAffected: '', painPoints: [],
+            alternatives: '', valueProposition: '', components: [],
+            differentiation: '', mappings: {}
+        };
+        localStorage.removeItem(STORAGE_KEY);
+        populateFields();
+        renderPainPoints();
+        renderComponents();
+        renderMappings();
+        renderMaps();
+    }
+
+    function migrateData() {
+        // Add slider fields to existing pain points and components that lack them
+        data.painPoints.forEach(p => {
+            if (p.urgency === undefined) p.urgency = 3;
+            if (p.addressed === undefined) p.addressed = 3;
+        });
+        data.components.forEach(c => {
+            if (c.effectiveness === undefined) c.effectiveness = 3;
+            if (c.advantage === undefined) c.advantage = 3;
+        });
+    }
+
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                data = JSON.parse(saved);
+                migrateData();
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+        populateFields();
+        renderPainPoints();
+        renderComponents();
+        renderMappings();
+        renderMaps();
+    }
+
+    // Auto-save on field input
+    document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+        el.addEventListener('input', autoSave);
+    });
+
+    load();
+    </script>
+</body>
+</html>

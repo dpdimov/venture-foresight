@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futures Triangle | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --push-color: #6a7b4a;
+            --pull-color: #2b6777;
+            --weight-color: #c05929;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Topic input */
+        .topic-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-2);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto 36px;
+            text-align: center;
+        }
+
+        .topic-section label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-2);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        textarea { min-height: 70px; }
+
+        /* Main layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            align-items: start;
+        }
+
+        /* SVG visualization */
+        .viz-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .viz-panel svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Force sections */
+        .forces-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .force-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            position: relative;
+        }
+
+        .force-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .force-section.push::before { background: var(--push-color); }
+        .force-section.pull::before { background: var(--pull-color); }
+        .force-section.weight::before { background: var(--weight-color); }
+
+        .force-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .force-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .push .force-icon { background: var(--push-color); }
+        .pull .force-icon { background: var(--pull-color); }
+        .weight .force-icon { background: var(--weight-color); }
+
+        .force-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .push .force-title { color: var(--push-color); }
+        .pull .force-title { color: var(--pull-color); }
+        .weight .force-title { color: var(--weight-color); }
+
+        .force-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            padding-left: 42px;
+        }
+
+        .force-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .force-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .force-item-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .force-item-top input[type="text"] {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            background: var(--bg-secondary);
+        }
+
+        .force-item-bottom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding-left: 2px;
+        }
+
+        .strength-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 55px;
+            text-align: right;
+        }
+
+        .strength-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
+            outline: none;
+        }
+
+        .strength-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .push .strength-slider::-webkit-slider-thumb { background: var(--push-color); }
+        .pull .strength-slider::-webkit-slider-thumb { background: var(--pull-color); }
+        .weight .strength-slider::-webkit-slider-thumb { background: var(--weight-color); }
+
+        .strength-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .push .strength-slider::-moz-range-thumb { background: var(--push-color); }
+        .pull .strength-slider::-moz-range-thumb { background: var(--pull-color); }
+        .weight .strength-slider::-moz-range-thumb { background: var(--weight-color); }
+
+        .strength-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .push .strength-value { color: var(--push-color); }
+        .pull .strength-value { color: var(--pull-color); }
+        .weight .strength-value { color: var(--weight-color); }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            line-height: 1;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-btn:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .add-item-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .push .add-item-btn:hover { border-color: var(--push-color); color: var(--push-color); }
+        .pull .add-item-btn:hover { border-color: var(--pull-color); color: var(--pull-color); }
+        .weight .add-item-btn:hover { border-color: var(--weight-color); color: var(--weight-color); }
+
+        /* Emerging future section */
+        .emerging-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 36px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .emerging-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .emerging-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .emerging-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent-5);
+        }
+
+        .emerging-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-left: 42px;
+        }
+
+        .emerging-section textarea {
+            min-height: 100px;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 36px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .viz-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+            .force-description { padding-left: 0; }
+            .emerging-description { padding-left: 0; }
+            .force-item-bottom { flex-wrap: wrap; }
+        }
+
+        /* Print styles */
+        @media print {
+            .site-nav, .controls-bar, .save-indicator, .add-item-btn, .remove-btn { display: none !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-2); background: none; }
+            .main-layout { grid-template-columns: 1fr 1fr; gap: 20px; }
+            .viz-panel { position: static; border: 1px solid #ccc; }
+            .force-section { break-inside: avoid; border: 1px solid #ddd; }
+            .emerging-section { break-inside: avoid; border: 1px solid #ddd; }
+            .topic-section { border: 1px solid #ccc; }
+            textarea, input[type="text"] { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+            .strength-slider { display: none; }
+            .strength-label { display: none; }
+            .force-item-bottom::after {
+                content: attr(data-print-strength);
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/" class="active">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Futures Triangle</h1>
+            <p class="subtitle">Explore the interplay of three forces shaping the future: the push of the present, the pull of the future, and the weight of the past</p>
+        </header>
+
+        <!-- Topic -->
+        <div class="topic-section">
+            <label>Topic / Focus Question</label>
+            <input type="text" id="topic-input" placeholder="e.g. The future of remote work in the next decade" oninput="updateTopic(this.value)">
+        </div>
+
+        <!-- Main layout: visualization + forces -->
+        <div class="main-layout">
+            <!-- SVG Visualization -->
+            <div class="viz-panel">
+                <svg id="triangle-svg" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+
+            <!-- Force sections -->
+            <div class="forces-panel">
+                <!-- Pull of the Future -->
+                <div class="force-section pull" id="section-pull">
+                    <div class="force-header">
+                        <div class="force-icon">&#9650;</div>
+                        <h2 class="force-title">Pull of the Future</h2>
+                    </div>
+                    <p class="force-description">Aspirations, visions, and images of what could be. What is pulling us toward a different future?</p>
+                    <div id="pull-items" class="force-items"></div>
+                    <button class="add-item-btn" onclick="addItem('pull')">+ Add a pull factor</button>
+                </div>
+
+                <!-- Push of the Present -->
+                <div class="force-section push" id="section-push">
+                    <div class="force-header">
+                        <div class="force-icon">&#9654;</div>
+                        <h2 class="force-title">Push of the Present</h2>
+                    </div>
+                    <p class="force-description">Drivers of change: technology trends, demographic shifts, environmental pressures. What is pushing us away from the status quo?</p>
+                    <div id="push-items" class="force-items"></div>
+                    <button class="add-item-btn" onclick="addItem('push')">+ Add a push factor</button>
+                </div>
+
+                <!-- Weight of the Past -->
+                <div class="force-section weight" id="section-weight">
+                    <div class="force-header">
+                        <div class="force-icon">&#9660;</div>
+                        <h2 class="force-title">Weight of the Past</h2>
+                    </div>
+                    <p class="force-description">Drivers of resistance: legacy systems, cultural inertia, regulations, vested interests. What is holding us back?</p>
+                    <div id="weight-items" class="force-items"></div>
+                    <button class="add-item-btn" onclick="addItem('weight')">+ Add a weight factor</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emerging Future -->
+        <div class="emerging-section">
+            <div class="emerging-header">
+                <div class="emerging-icon">&#9679;</div>
+                <h2 class="emerging-title">Emerging Future</h2>
+            </div>
+            <p class="emerging-description">Based on the interplay of these three forces, what plausible future is emerging? Synthesize your analysis below.</p>
+            <textarea id="emerging-textarea" placeholder="Describe the emerging future that results from the interplay of push, pull, and weight forces..." oninput="updateEmerging(this.value)"></textarea>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-futures-triangle';
+
+    let data = {
+        topic: '',
+        emerging: '',
+        push: [],
+        pull: [],
+        weight: []
+    };
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeXml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function updateTopic(value) {
+        data.topic = value;
+        autoSave();
+        renderSVG();
+    }
+
+    function updateEmerging(value) {
+        data.emerging = value;
+        autoSave();
+    }
+
+    function addItem(force) {
+        const item = { id: generateId(), text: '', strength: 3 };
+        data[force].push(item);
+        renderForce(force);
+        renderSVG();
+        autoSave();
+        setTimeout(() => {
+            const input = document.querySelector(`[data-item-id="${item.id}"] input[type="text"]`);
+            if (input) input.focus();
+        }, 50);
+    }
+
+    function removeItem(force, id) {
+        data[force] = data[force].filter(item => item.id !== id);
+        renderForce(force);
+        renderSVG();
+        autoSave();
+    }
+
+    function updateItemText(force, id, text) {
+        const item = data[force].find(i => i.id === id);
+        if (item) {
+            item.text = text;
+            autoSave();
+            renderSVG();
+        }
+    }
+
+    function updateItemStrength(force, id, strength) {
+        const item = data[force].find(i => i.id === id);
+        if (item) {
+            item.strength = parseInt(strength);
+            autoSave();
+            renderSVG();
+            // Update displayed value
+            const valueEl = document.querySelector(`[data-item-id="${id}"] .strength-value`);
+            if (valueEl) valueEl.textContent = strength;
+            // Update print attribute
+            const bottomEl = document.querySelector(`[data-item-id="${id}"] .force-item-bottom`);
+            if (bottomEl) bottomEl.setAttribute('data-print-strength', 'Strength: ' + strength + '/5');
+        }
+    }
+
+    const strengthLabels = ['', 'Weak', 'Mild', 'Moderate', 'Strong', 'Very strong'];
+
+    function renderForce(force) {
+        const container = document.getElementById(force + '-items');
+        container.innerHTML = data[force].map(item => `
+            <div class="force-item" data-item-id="${item.id}">
+                <div class="force-item-top">
+                    <input type="text" value="${escapeHtml(item.text)}"
+                        placeholder="Describe this ${force === 'push' ? 'push' : force === 'pull' ? 'pull' : 'weight'} factor..."
+                        oninput="updateItemText('${force}', '${item.id}', this.value)">
+                    <button class="remove-btn" onclick="removeItem('${force}', '${item.id}')" title="Remove">&times;</button>
+                </div>
+                <div class="force-item-bottom" data-print-strength="Strength: ${item.strength}/5">
+                    <span class="strength-label">${strengthLabels[item.strength]}</span>
+                    <input type="range" class="strength-slider" min="1" max="5" value="${item.strength}"
+                        oninput="updateItemStrength('${force}', '${item.id}', this.value)">
+                    <span class="strength-value">${item.strength}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderAllForces() {
+        renderForce('push');
+        renderForce('pull');
+        renderForce('weight');
+    }
+
+    // SVG Visualization
+    function avgStrength(force) {
+        if (data[force].length === 0) return 0;
+        const sum = data[force].reduce((s, item) => s + item.strength, 0);
+        return sum / data[force].length;
+    }
+
+    function renderSVG() {
+        const svg = document.getElementById('triangle-svg');
+
+        // Triangle vertices
+        const pull = { x: 300, y: 50 };   // top
+        const push = { x: 50, y: 450 };   // bottom-left
+        const weight = { x: 550, y: 450 }; // bottom-right
+        const center = { x: (pull.x + push.x + weight.x) / 3, y: (pull.y + push.y + weight.y) / 3 };
+
+        // Compute average strengths (0 if no items)
+        const pullAvg = avgStrength('pull');
+        const pushAvg = avgStrength('push');
+        const weightAvg = avgStrength('weight');
+
+        // Scale factors for label size (base 1.0, up to 1.5 at strength 5)
+        const pullScale = pullAvg > 0 ? 0.85 + (pullAvg / 5) * 0.65 : 1.0;
+        const pushScale = pushAvg > 0 ? 0.85 + (pushAvg / 5) * 0.65 : 1.0;
+        const weightScale = weightAvg > 0 ? 0.85 + (weightAvg / 5) * 0.65 : 1.0;
+
+        let svgContent = '';
+
+        // Defs for glow filter
+        svgContent += `
+            <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        `;
+
+        // Triangle fill
+        svgContent += `
+            <polygon points="${pull.x},${pull.y} ${push.x},${push.y} ${weight.x},${weight.y}"
+                fill="rgba(43, 103, 119, 0.06)"
+                stroke="#94a3b8"
+                stroke-width="2"
+                stroke-linejoin="round"/>
+        `;
+
+        // Subtle grid lines from center to vertices
+        svgContent += `
+            <line x1="${center.x}" y1="${center.y}" x2="${pull.x}" y2="${pull.y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="${center.x}" y1="${center.y}" x2="${push.x}" y2="${push.y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="${center.x}" y1="${center.y}" x2="${weight.x}" y2="${weight.y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+        `;
+
+        // --- Pull of Future (top) ---
+        svgContent += `
+            <circle cx="${pull.x}" cy="${pull.y}" r="${12 + pullAvg * 3}" fill="rgba(43, 103, 119, 0.12)" stroke="none"/>
+            <circle cx="${pull.x}" cy="${pull.y}" r="8" fill="#2b6777"/>
+        `;
+        // Vertex label
+        const pullFontSize = 13 * pullScale;
+        svgContent += `
+            <text x="${pull.x}" y="${pull.y - 22}" text-anchor="middle"
+                font-family="'Crimson Pro', serif" font-size="${pullFontSize}" font-weight="600" fill="#2b6777">
+                Pull of the Future
+            </text>
+        `;
+        // Item count badge
+        if (data.pull.length > 0) {
+            svgContent += `
+                <text x="${pull.x}" y="${pull.y + 28}" text-anchor="middle"
+                    font-family="'Source Sans 3', sans-serif" font-size="11" fill="#2b6777">
+                    ${data.pull.length} factor${data.pull.length !== 1 ? 's' : ''}${pullAvg > 0 ? ' (avg ' + pullAvg.toFixed(1) + ')' : ''}
+                </text>
+            `;
+        }
+        // --- Push of Present (bottom-left) ---
+        svgContent += `
+            <circle cx="${push.x}" cy="${push.y}" r="${12 + pushAvg * 3}" fill="rgba(106, 123, 74, 0.12)" stroke="none"/>
+            <circle cx="${push.x}" cy="${push.y}" r="8" fill="#6a7b4a"/>
+        `;
+        const pushFontSize = 13 * pushScale;
+        svgContent += `
+            <text x="${push.x + 10}" y="${push.y + 28}" text-anchor="start"
+                font-family="'Crimson Pro', serif" font-size="${pushFontSize}" font-weight="600" fill="#6a7b4a">
+                Push of the Present
+            </text>
+        `;
+        if (data.push.length > 0) {
+            svgContent += `
+                <text x="${push.x + 10}" y="${push.y + 46}" text-anchor="start"
+                    font-family="'Source Sans 3', sans-serif" font-size="11" fill="#6a7b4a">
+                    ${data.push.length} factor${data.push.length !== 1 ? 's' : ''}${pushAvg > 0 ? ' (avg ' + pushAvg.toFixed(1) + ')' : ''}
+                </text>
+            `;
+        }
+
+        // --- Weight of Past (bottom-right) ---
+        svgContent += `
+            <circle cx="${weight.x}" cy="${weight.y}" r="${12 + weightAvg * 3}" fill="rgba(192, 89, 41, 0.12)" stroke="none"/>
+            <circle cx="${weight.x}" cy="${weight.y}" r="8" fill="#c05929"/>
+        `;
+        const weightFontSize = 13 * weightScale;
+        svgContent += `
+            <text x="${weight.x - 10}" y="${weight.y + 28}" text-anchor="end"
+                font-family="'Crimson Pro', serif" font-size="${weightFontSize}" font-weight="600" fill="#c05929">
+                Weight of the Past
+            </text>
+        `;
+        if (data.weight.length > 0) {
+            svgContent += `
+                <text x="${weight.x - 10}" y="${weight.y + 46}" text-anchor="end"
+                    font-family="'Source Sans 3', sans-serif" font-size="11" fill="#c05929">
+                    ${data.weight.length} factor${data.weight.length !== 1 ? 's' : ''}${weightAvg > 0 ? ' (avg ' + weightAvg.toFixed(1) + ')' : ''}
+                </text>
+            `;
+        }
+
+        // Item dots near each vertex
+        svgContent = renderItemDotsStr(svgContent, data.pull, pull, '#2b6777', -1);
+        svgContent = renderItemDotsStr(svgContent, data.push, push, '#6a7b4a', 1);
+        svgContent = renderItemDotsStr(svgContent, data.weight, weight, '#c05929', 1);
+
+        // Emerging Future label in center
+        svgContent += `
+            <circle cx="${center.x}" cy="${center.y}" r="40" fill="rgba(124, 82, 149, 0.08)" stroke="#7c5295" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="${center.x}" y="${center.y - 8}" text-anchor="middle"
+                font-family="'Crimson Pro', serif" font-size="12" font-weight="600" fill="#7c5295">
+                Emerging
+            </text>
+            <text x="${center.x}" y="${center.y + 8}" text-anchor="middle"
+                font-family="'Crimson Pro', serif" font-size="12" font-weight="600" fill="#7c5295">
+                Future
+            </text>
+        `;
+
+        // Topic label at the very top
+        if (data.topic) {
+            svgContent += `
+                <text x="300" y="16" text-anchor="middle"
+                    font-family="'Source Sans 3', sans-serif" font-size="12" fill="#64748b">
+                    ${escapeXml(data.topic.length > 60 ? data.topic.substring(0, 60) + '...' : data.topic)}
+                </text>
+            `;
+        }
+
+        // Directional arrows along triangle edges
+        // Push -> Pull (left edge, upward): arrow near midpoint
+        const pushPullMidX = (push.x + pull.x) / 2;
+        const pushPullMidY = (push.y + pull.y) / 2;
+        svgContent += `
+            <text x="${pushPullMidX - 18}" y="${pushPullMidY}" text-anchor="middle"
+                font-size="16" fill="#6a7b4a" opacity="0.5">&#8599;</text>
+        `;
+
+        // Weight -> (right edge, down): arrow near midpoint
+        const weightPullMidX = (weight.x + pull.x) / 2;
+        const weightPullMidY = (weight.y + pull.y) / 2;
+        svgContent += `
+            <text x="${weightPullMidX + 18}" y="${weightPullMidY}" text-anchor="middle"
+                font-size="16" fill="#c05929" opacity="0.5">&#8600;</text>
+        `;
+
+        // Bottom edge
+        const bottomMidX = (push.x + weight.x) / 2;
+        const bottomMidY = (push.y + weight.y) / 2;
+        svgContent += `
+            <text x="${bottomMidX}" y="${bottomMidY + 18}" text-anchor="middle"
+                font-size="16" fill="#64748b" opacity="0.4">&#8596;</text>
+        `;
+
+        svg.innerHTML = svgContent;
+    }
+
+    function renderItemDotsStr(svgContent, items, vertex, color, direction) {
+        // Place small dots near the vertex, offset inward toward center
+        const center = { x: 300, y: 317 };
+        const count = items.length;
+        if (count === 0) return svgContent;
+
+        // Direction toward center
+        const dx = center.x - vertex.x;
+        const dy = center.y - vertex.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const ndx = dx / dist;
+        const ndy = dy / dist;
+
+        // Perpendicular for spreading dots
+        const px = -ndy;
+        const py = ndx;
+
+        items.forEach((item, i) => {
+            const offset = 40 + (i % 3) * 18;
+            const spread = (i - (count - 1) / 2) * 16;
+            const row = Math.floor(i / 3);
+            const x = vertex.x + ndx * (offset + row * 16) + px * spread;
+            const y = vertex.y + ndy * (offset + row * 16) + py * spread;
+
+            const r = 3 + (item.strength * 0.8);
+            const opacity = 0.4 + (item.strength / 5) * 0.5;
+            const title = escapeXml(item.text || '(unnamed)') + ' - Strength: ' + item.strength + '/5';
+
+            svgContent += `
+                <circle cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity="${opacity}">
+                    <title>${title}</title>
+                </circle>
+            `;
+        });
+
+        return svgContent;
+    }
+
+    // Auto-save with debounce
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('visible');
+            setTimeout(() => indicator.classList.remove('visible'), 2000);
+        }, 500);
+    }
+
+    // Export functions
+    function exportPDF() {
+        window.print();
+    }
+
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'futures-triangle.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = { topic: '', emerging: '', push: [], pull: [], weight: [] };
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('topic-input').value = '';
+        document.getElementById('emerging-textarea').value = '';
+        renderAllForces();
+        renderSVG();
+    }
+
+    // Load
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                data = {
+                    topic: parsed.topic || '',
+                    emerging: parsed.emerging || '',
+                    push: parsed.push || [],
+                    pull: parsed.pull || [],
+                    weight: parsed.weight || []
+                };
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+        document.getElementById('topic-input').value = data.topic;
+        document.getElementById('emerging-textarea').value = data.emerging;
+        renderAllForces();
+        renderSVG();
+    }
+
+    load();
+    </script>
+</body>
+</html>

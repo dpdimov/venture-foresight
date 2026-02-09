@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futures Wheel | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --ring-1: #c05929;
+            --ring-2: #2b6777;
+            --ring-3: #7c5295;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-4), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* View toggle */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 4px;
+            display: inline-flex;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .view-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .action-btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .action-btn.primary {
+            background: var(--accent-4);
+            color: white;
+            border-color: var(--accent-4);
+        }
+
+        .action-btn.primary:hover { background: #5a6b3e; }
+
+        /* Central trend */
+        .center-node {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-4);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            text-align: center;
+        }
+
+        .center-node label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-4);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .center-node textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .center-node textarea:focus {
+            outline: none;
+            border-color: var(--accent-4);
+        }
+
+        /* Tree view */
+        .tree-view {
+            display: none;
+        }
+
+        .tree-view.active {
+            display: block;
+        }
+
+        .ring-section {
+            margin-bottom: 28px;
+        }
+
+        .ring-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+        }
+
+        .ring-header.ring-1 { border-color: var(--ring-1); }
+        .ring-header.ring-2 { border-color: var(--ring-2); }
+        .ring-header.ring-3 { border-color: var(--ring-3); }
+
+        .ring-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .ring-header.ring-1 .ring-label { color: var(--ring-1); }
+        .ring-header.ring-2 .ring-label { color: var(--ring-2); }
+        .ring-header.ring-3 .ring-label { color: var(--ring-3); }
+
+        .ring-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .ring-header.ring-1 .ring-badge { background: var(--ring-1); }
+        .ring-header.ring-2 .ring-badge { background: var(--ring-2); }
+        .ring-header.ring-3 .ring-badge { background: var(--ring-3); }
+
+        .implication-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .impl-depth {
+            width: 4px;
+            border-radius: 2px;
+            min-height: 36px;
+            flex-shrink: 0;
+            align-self: stretch;
+        }
+
+        .impl-depth.ring-1 { background: var(--ring-1); }
+        .impl-depth.ring-2 { background: var(--ring-2); }
+        .impl-depth.ring-3 { background: var(--ring-3); }
+
+        .impl-content {
+            flex: 1;
+        }
+
+        .impl-parent-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-style: italic;
+        }
+
+        .impl-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .impl-input:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        .impl-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .small-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .small-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .small-btn.delete:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .small-btn.add-child {
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .add-ring-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-ring-btn:hover {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+        }
+
+        /* Radial view */
+        .radial-view {
+            display: none;
+        }
+
+        .radial-view.active {
+            display: block;
+        }
+
+        .radial-canvas {
+            width: 100%;
+            min-height: 600px;
+            position: relative;
+            overflow: auto;
+        }
+
+        .radial-svg {
+            width: 100%;
+            height: 600px;
+        }
+
+        .radial-node {
+            cursor: default;
+        }
+
+        .radial-node text {
+            font-family: 'Source Sans 3', sans-serif;
+            fill: var(--text-primary);
+        }
+
+        .radial-link {
+            stroke: var(--border-color);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        .indent-1 { margin-left: 0; }
+        .indent-2 { margin-left: 32px; }
+        .indent-3 { margin-left: 64px; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+            .indent-2 { margin-left: 16px; }
+            .indent-3 { margin-left: 32px; }
+            .radial-svg { height: 400px; }
+        }
+
+        @media print {
+            .site-nav, .controls-bar, .save-indicator, .add-ring-btn, .small-btn, .radial-view { display: none !important; }
+            .tree-view { display: block !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-4); background: none; }
+            .center-node { border: 1px solid #ccc; }
+            .center-node textarea { border: none; background: none; padding: 4px 0; min-height: auto; resize: none; }
+            .ring-section { break-inside: avoid; }
+            .implication-item { border: 1px solid #eee; }
+            .impl-input { border: none; background: none; padding: 4px 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/" class="active">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Futures Wheel</h1>
+            <p class="subtitle">Explore cascading implications of a trend or change across three levels of depth</p>
+        </header>
+
+        <div class="center-node">
+            <label>Central Trend or Change</label>
+            <textarea id="central-trend" placeholder="e.g. AI replaces most routine knowledge work by 2030" oninput="updateCentral(this.value)"></textarea>
+        </div>
+
+        <div class="controls-bar" style="margin-bottom: 24px;">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="setView('tree')">Tree View</button>
+                <button class="view-btn" onclick="setView('radial')">Radial View</button>
+            </div>
+        </div>
+
+        <!-- Tree View -->
+        <div id="tree-view" class="tree-view active">
+            <!-- Ring 1: Direct Implications -->
+            <div class="ring-section">
+                <div class="ring-header ring-1">
+                    <span class="ring-label">1st Order — Direct Implications</span>
+                    <span id="ring1-count" class="ring-badge">0</span>
+                </div>
+                <div id="ring1-items"></div>
+                <button class="add-ring-btn" onclick="addImplication(null, 1)">+ Add direct implication</button>
+            </div>
+
+            <!-- Ring 2: Secondary Implications -->
+            <div class="ring-section">
+                <div class="ring-header ring-2">
+                    <span class="ring-label">2nd Order — Secondary Implications</span>
+                    <span id="ring2-count" class="ring-badge">0</span>
+                </div>
+                <div id="ring2-items"></div>
+            </div>
+
+            <!-- Ring 3: Tertiary Implications -->
+            <div class="ring-section">
+                <div class="ring-header ring-3">
+                    <span class="ring-label">3rd Order — Tertiary Implications</span>
+                    <span id="ring3-count" class="ring-badge">0</span>
+                </div>
+                <div id="ring3-items"></div>
+            </div>
+        </div>
+
+        <!-- Radial View -->
+        <div id="radial-view" class="radial-view">
+            <div class="radial-canvas">
+                <svg id="radial-svg" class="radial-svg"></svg>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-futures-wheel';
+
+    let data = {
+        central: '',
+        implications: []
+        // Each: { id, text, ring (1|2|3), parentId (null for ring 1) }
+    };
+
+    let currentView = 'tree';
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function updateCentral(value) {
+        data.central = value;
+        autoSave();
+        if (currentView === 'radial') renderRadial();
+    }
+
+    function addImplication(parentId, ring) {
+        const impl = {
+            id: generateId(),
+            text: '',
+            ring: ring,
+            parentId: parentId
+        };
+        data.implications.push(impl);
+        renderTree();
+        autoSave();
+        // Focus the new input
+        setTimeout(() => {
+            const input = document.querySelector(`[data-impl-id="${impl.id}"] .impl-input`);
+            if (input) input.focus();
+        }, 50);
+    }
+
+    function removeImplication(id) {
+        // Remove this and all children
+        const toRemove = new Set();
+        function collectChildren(parentId) {
+            toRemove.add(parentId);
+            data.implications.filter(i => i.parentId === parentId).forEach(child => {
+                collectChildren(child.id);
+            });
+        }
+        collectChildren(id);
+        data.implications = data.implications.filter(i => !toRemove.has(i.id));
+        renderTree();
+        if (currentView === 'radial') renderRadial();
+        autoSave();
+    }
+
+    function updateImplication(id, text) {
+        const impl = data.implications.find(i => i.id === id);
+        if (impl) {
+            impl.text = text;
+            autoSave();
+        }
+    }
+
+    function getByRing(ring) {
+        return data.implications.filter(i => i.ring === ring);
+    }
+
+    function getChildren(parentId) {
+        return data.implications.filter(i => i.parentId === parentId);
+    }
+
+    function getParentText(parentId) {
+        if (!parentId) return data.central || '(central trend)';
+        const parent = data.implications.find(i => i.id === parentId);
+        return parent ? (parent.text || '(unnamed)') : '(unknown)';
+    }
+
+    function truncate(str, len) {
+        if (!str) return '(unnamed)';
+        return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    function escapeAttr(str) {
+        return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderTree() {
+        // Ring 1
+        const ring1 = getByRing(1);
+        const ring1Container = document.getElementById('ring1-items');
+        ring1Container.innerHTML = ring1.map(impl => `
+            <div class="implication-item indent-1" data-impl-id="${impl.id}">
+                <div class="impl-depth ring-1"></div>
+                <div class="impl-content">
+                    <input class="impl-input" type="text" value="${escapeAttr(impl.text)}"
+                        placeholder="Direct implication..."
+                        oninput="updateImplication('${impl.id}', this.value)">
+                </div>
+                <div class="impl-actions">
+                    <button class="small-btn add-child" onclick="addImplication('${impl.id}', 2)" title="Add 2nd-order implication">+2nd</button>
+                    <button class="small-btn delete" onclick="removeImplication('${impl.id}')" title="Remove">×</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('ring1-count').textContent = ring1.length;
+
+        // Ring 2
+        const ring2 = getByRing(2);
+        const ring2Container = document.getElementById('ring2-items');
+        ring2Container.innerHTML = ring2.map(impl => `
+            <div class="implication-item indent-2" data-impl-id="${impl.id}">
+                <div class="impl-depth ring-2"></div>
+                <div class="impl-content">
+                    <div class="impl-parent-label">↳ from: ${truncate(getParentText(impl.parentId), 40)}</div>
+                    <input class="impl-input" type="text" value="${escapeAttr(impl.text)}"
+                        placeholder="Secondary implication..."
+                        oninput="updateImplication('${impl.id}', this.value)">
+                </div>
+                <div class="impl-actions">
+                    <button class="small-btn add-child" onclick="addImplication('${impl.id}', 3)" title="Add 3rd-order implication">+3rd</button>
+                    <button class="small-btn delete" onclick="removeImplication('${impl.id}')" title="Remove">×</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('ring2-count').textContent = ring2.length;
+
+        // Ring 3
+        const ring3 = getByRing(3);
+        const ring3Container = document.getElementById('ring3-items');
+        ring3Container.innerHTML = ring3.map(impl => `
+            <div class="implication-item indent-3" data-impl-id="${impl.id}">
+                <div class="impl-depth ring-3"></div>
+                <div class="impl-content">
+                    <div class="impl-parent-label">↳ from: ${truncate(getParentText(impl.parentId), 40)}</div>
+                    <input class="impl-input" type="text" value="${escapeAttr(impl.text)}"
+                        placeholder="Tertiary implication..."
+                        oninput="updateImplication('${impl.id}', this.value)">
+                </div>
+                <div class="impl-actions">
+                    <button class="small-btn delete" onclick="removeImplication('${impl.id}')" title="Remove">×</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('ring3-count').textContent = ring3.length;
+    }
+
+    function renderRadial() {
+        const svg = document.getElementById('radial-svg');
+        const rect = svg.getBoundingClientRect();
+        const w = rect.width || 800;
+        const h = rect.height || 600;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        const ringRadii = [0, 120, 220, 310];
+        const ringColors = ['var(--accent-4)', 'var(--ring-1)', 'var(--ring-2)', 'var(--ring-3)'];
+
+        let svgContent = '';
+
+        // Draw ring circles (background guides)
+        for (let r = 1; r <= 3; r++) {
+            svgContent += `<circle cx="${cx}" cy="${cy}" r="${ringRadii[r]}" fill="none" stroke="${r === 1 ? '#c0592920' : r === 2 ? '#2b677720' : '#7c529520'}" stroke-width="1" stroke-dasharray="4 4"/>`;
+        }
+
+        // Central node
+        const centralText = data.central || 'Central Trend';
+        svgContent += `
+            <circle cx="${cx}" cy="${cy}" r="50" fill="var(--accent-4)" opacity="0.15"/>
+            <circle cx="${cx}" cy="${cy}" r="50" fill="none" stroke="var(--accent-4)" stroke-width="2"/>
+            <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--text-primary)">
+                ${wrapSvgText(centralText, 14, cx, cy - 8)}
+            </text>
+        `;
+
+        // Ring 1 nodes
+        const ring1 = getByRing(1);
+        ring1.forEach((impl, i) => {
+            const angle = (2 * Math.PI * i / Math.max(ring1.length, 1)) - Math.PI / 2;
+            const x = cx + ringRadii[1] * Math.cos(angle);
+            const y = cy + ringRadii[1] * Math.sin(angle);
+
+            // Line from center
+            svgContent += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--ring-1)" stroke-width="1.5" opacity="0.4"/>`;
+
+            // Node
+            svgContent += `
+                <circle cx="${x}" cy="${y}" r="36" fill="var(--ring-1)" opacity="0.1"/>
+                <circle cx="${x}" cy="${y}" r="36" fill="none" stroke="var(--ring-1)" stroke-width="1.5"/>
+                <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--text-primary)">
+                    ${wrapSvgText(impl.text || '...', 10, x, y - 6)}
+                </text>
+            `;
+
+            // Ring 2 children
+            const children2 = getChildren(impl.id);
+            children2.forEach((child, j) => {
+                const childAngle = angle + (j - (children2.length - 1) / 2) * 0.35;
+                const x2 = cx + ringRadii[2] * Math.cos(childAngle);
+                const y2 = cy + ringRadii[2] * Math.sin(childAngle);
+
+                svgContent += `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="var(--ring-2)" stroke-width="1" opacity="0.3"/>`;
+                svgContent += `
+                    <circle cx="${x2}" cy="${y2}" r="30" fill="var(--ring-2)" opacity="0.1"/>
+                    <circle cx="${x2}" cy="${y2}" r="30" fill="none" stroke="var(--ring-2)" stroke-width="1"/>
+                    <text x="${x2}" y="${y2}" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--text-primary)">
+                        ${wrapSvgText(child.text || '...', 8, x2, y2 - 5)}
+                    </text>
+                `;
+
+                // Ring 3 children
+                const children3 = getChildren(child.id);
+                children3.forEach((child3, k) => {
+                    const child3Angle = childAngle + (k - (children3.length - 1) / 2) * 0.25;
+                    const x3 = cx + ringRadii[3] * Math.cos(child3Angle);
+                    const y3 = cy + ringRadii[3] * Math.sin(child3Angle);
+
+                    svgContent += `<line x1="${x2}" y1="${y2}" x2="${x3}" y2="${y3}" stroke="var(--ring-3)" stroke-width="1" opacity="0.25"/>`;
+                    svgContent += `
+                        <circle cx="${x3}" cy="${y3}" r="24" fill="var(--ring-3)" opacity="0.1"/>
+                        <circle cx="${x3}" cy="${y3}" r="24" fill="none" stroke="var(--ring-3)" stroke-width="1"/>
+                        <text x="${x3}" y="${y3}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--text-primary)">
+                            ${wrapSvgText(child3.text || '...', 7, x3, y3 - 4)}
+                        </text>
+                    `;
+                });
+            });
+        });
+
+        svg.innerHTML = svgContent;
+    }
+
+    function wrapSvgText(text, maxChars, x, startY) {
+        if (!text) return '';
+        const words = text.split(' ');
+        const lines = [];
+        let current = '';
+
+        words.forEach(word => {
+            if ((current + ' ' + word).trim().length > maxChars) {
+                if (current) lines.push(current.trim());
+                current = word;
+            } else {
+                current = (current + ' ' + word).trim();
+            }
+        });
+        if (current) lines.push(current.trim());
+
+        // Limit to 3 lines
+        if (lines.length > 3) {
+            lines.length = 3;
+            lines[2] = lines[2].substring(0, maxChars - 3) + '...';
+        }
+
+        return lines.map((line, i) =>
+            `<tspan x="${x}" dy="${i === 0 ? 0 : 12}">${escapeXml(line)}</tspan>`
+        ).join('');
+    }
+
+    function escapeXml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function setView(view) {
+        currentView = view;
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.view-btn:${view === 'tree' ? 'first-child' : 'last-child'}`).classList.add('active');
+
+        document.getElementById('tree-view').classList.toggle('active', view === 'tree');
+        document.getElementById('radial-view').classList.toggle('active', view === 'radial');
+
+        if (view === 'radial') renderRadial();
+    }
+
+    function exportPDF() {
+        // Switch to tree view for printing (more readable)
+        setView('tree');
+        setTimeout(() => window.print(), 100);
+    }
+
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'futures-wheel.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = { central: '', implications: [] };
+        document.getElementById('central-trend').value = '';
+        localStorage.removeItem(STORAGE_KEY);
+        renderTree();
+        if (currentView === 'radial') renderRadial();
+    }
+
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }, 500);
+    }
+
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                data = JSON.parse(saved);
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+        document.getElementById('central-trend').value = data.central || '';
+        renderTree();
+    }
+
+    load();
+    </script>
+</body>
+</html>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Readiness | Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Context field */
+        .context-field {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+        }
+
+        .context-field label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-2);
+        }
+
+        /* Main layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+            align-items: start;
+        }
+
+        /* Radar chart panel */
+        .radar-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .radar-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .radar-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .radar-container svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Overall score */
+        .overall-score {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .overall-score-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .overall-score-value {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--accent-2);
+            line-height: 1.2;
+        }
+
+        .overall-score-max {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .overall-score-interpretation {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(43, 103, 119, 0.1);
+            color: var(--accent-2);
+        }
+
+        /* Dimension cards */
+        .dimensions-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .dimension-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .dimension-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .dimension-card.dim-uncertainty::before { background: var(--accent-1); }
+        .dimension-card.dim-systems::before { background: var(--accent-2); }
+        .dimension-card.dim-agency::before { background: var(--accent-4); }
+        .dimension-card.dim-temporal::before { background: var(--accent-5); }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .dimension-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .dim-uncertainty .dimension-name { color: var(--accent-1); }
+        .dim-systems .dimension-name { color: var(--accent-2); }
+        .dim-agency .dimension-name { color: var(--accent-4); }
+        .dim-temporal .dimension-name { color: var(--accent-5); }
+
+        .dimension-avg {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .dim-uncertainty .dimension-avg { color: var(--accent-1); }
+        .dim-systems .dimension-avg { color: var(--accent-2); }
+        .dim-agency .dimension-avg { color: var(--accent-4); }
+        .dim-temporal .dimension-avg { color: var(--accent-5); }
+
+        .dimension-avg-max {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        /* Statement rows */
+        .statement-row {
+            margin-bottom: 16px;
+        }
+
+        .statement-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .statement-text {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-track {
+            flex: 1;
+            position: relative;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            background: linear-gradient(to right, var(--border-color), var(--border-color));
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .dim-uncertainty input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-1));
+        }
+        .dim-uncertainty input[type="range"]::-webkit-slider-thumb { background: var(--accent-1); }
+        .dim-uncertainty input[type="range"]::-moz-range-thumb { background: var(--accent-1); }
+
+        .dim-systems input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-2));
+        }
+        .dim-systems input[type="range"]::-webkit-slider-thumb { background: var(--accent-2); }
+        .dim-systems input[type="range"]::-moz-range-thumb { background: var(--accent-2); }
+
+        .dim-agency input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-4));
+        }
+        .dim-agency input[type="range"]::-webkit-slider-thumb { background: var(--accent-4); }
+        .dim-agency input[type="range"]::-moz-range-thumb { background: var(--accent-4); }
+
+        .dim-temporal input[type="range"] {
+            background: linear-gradient(to right, #e2e8f0, var(--accent-5));
+        }
+        .dim-temporal input[type="range"]::-webkit-slider-thumb { background: var(--accent-5); }
+        .dim-temporal input[type="range"]::-moz-range-thumb { background: var(--accent-5); }
+
+        .slider-value-display {
+            font-weight: 700;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .dim-uncertainty .slider-value-display { color: var(--accent-1); }
+        .dim-systems .slider-value-display { color: var(--accent-2); }
+        .dim-agency .slider-value-display { color: var(--accent-4); }
+        .dim-temporal .slider-value-display { color: var(--accent-5); }
+
+        .slider-endpoints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover { background: var(--bg-tertiary); }
+
+        .save-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.visible { opacity: 1; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .radar-panel {
+                position: static;
+            }
+
+            .radar-container {
+                max-width: 340px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 24px 16px; }
+
+            .radar-container {
+                max-width: 300px;
+            }
+
+            .dimension-card {
+                padding: 18px;
+            }
+
+            .dimension-name {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Print */
+        .print-details {
+            display: none;
+        }
+
+        @media print {
+            .site-nav, .controls-bar, .save-indicator { display: none !important; }
+            .print-details { display: block !important; }
+            body { background: white; }
+            .container { padding: 20px; max-width: 100%; }
+            h1 { font-size: 2rem; -webkit-text-fill-color: var(--accent-2); background: none; }
+            .main-layout { grid-template-columns: 1fr; gap: 20px; }
+            .radar-panel { position: static; break-inside: avoid; border: 1px solid #ccc; }
+            .dimension-card { break-inside: avoid; border: 1px solid #ccc; }
+            .context-field { border: 1px solid #ccc; }
+            input[type="text"] { border: none; background: none; padding: 4px 0; }
+            input[type="range"] { -webkit-appearance: none; height: 6px; }
+            .radar-container { max-width: 360px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="../" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="../problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="../customer-persona/">Customer Persona</a></li>
+                <li><a href="../futures-wheel/">Futures Wheel</a></li>
+                <li><a href="../scenario-planning/">Scenario Planning</a></li>
+                <li><a href="../cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="../futures-triangle/">Futures Triangle</a></li>
+                <li><a href="../future-readiness/" class="active">Future Readiness</a></li>
+                <li><a href="../causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Future Readiness</h1>
+            <p class="subtitle">Assess your readiness to engage with the future across four key dimensions of foresight thinking</p>
+        </header>
+
+        <!-- Name / Context field -->
+        <div class="context-field">
+            <label for="context-name">Name / Context</label>
+            <input type="text" id="context-name" placeholder="e.g. Team Alpha - Q1 2025" oninput="onFieldChange()">
+        </div>
+
+        <!-- Main two-column layout -->
+        <div class="main-layout">
+            <!-- Radar chart (left) -->
+            <div class="radar-panel">
+                <div class="radar-title">Readiness Profile</div>
+                <div class="radar-container" id="radar-container"></div>
+                <div class="overall-score">
+                    <div class="overall-score-label">Overall Readiness Score</div>
+                    <div class="overall-score-value" id="overall-score-value">3.0 <span class="overall-score-max">/ 5.0</span></div>
+                    <div><span class="overall-score-interpretation" id="overall-interpretation">Emerging</span></div>
+                </div>
+            </div>
+
+            <!-- Dimension cards (right) -->
+            <div class="dimensions-panel" id="dimensions-panel"></div>
+        </div>
+
+        <!-- Print-only full details -->
+        <div class="print-details" id="print-details"></div>
+
+        <div class="controls-bar">
+            <button class="action-btn" onclick="exportPDF()">Export PDF</button>
+            <button class="action-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        <div id="save-indicator" class="save-indicator">Saved to browser storage</div>
+    </div>
+
+    <script>
+    const STORAGE_KEY = 'ej-future-readiness';
+
+    const DIMENSIONS = [
+        {
+            key: 'uncertainty',
+            name: 'Uncertainty Tolerance',
+            cssClass: 'dim-uncertainty',
+            color: '#c05929',
+            statements: [
+                'I am comfortable making decisions without complete information.',
+                'I can hold multiple possibilities in mind without needing to pick one immediately.',
+                'Ambiguous situations energise rather than paralyse me.'
+            ]
+        },
+        {
+            key: 'systems',
+            name: 'Systems Awareness',
+            cssClass: 'dim-systems',
+            color: '#2b6777',
+            statements: [
+                'I naturally look for connections between seemingly unrelated trends.',
+                'I consider second and third-order effects when evaluating changes.',
+                'I think about how different parts of a system influence each other.'
+            ]
+        },
+        {
+            key: 'agency',
+            name: 'Agency Orientation',
+            cssClass: 'dim-agency',
+            color: '#6a7b4a',
+            statements: [
+                'I believe my actions can meaningfully shape future outcomes.',
+                'I look for opportunities to influence emerging trends rather than just react.',
+                'I see the future as something to be created, not just predicted.'
+            ]
+        },
+        {
+            key: 'temporal',
+            name: 'Temporal Flexibility',
+            cssClass: 'dim-temporal',
+            color: '#7c5295',
+            statements: [
+                'I can shift my thinking between short-term and long-term perspectives easily.',
+                'I consider how today\'s decisions might play out across different timeframes.',
+                'I regularly think about what the world might look like 10+ years from now.'
+            ]
+        }
+    ];
+
+    // Data: context name + scores per dimension (3 statements each, values 1-5)
+    let data = {
+        context: '',
+        scores: {
+            uncertainty: [3, 3, 3],
+            systems: [3, 3, 3],
+            agency: [3, 3, 3],
+            temporal: [3, 3, 3]
+        }
+    };
+
+    function getDefaultData() {
+        return {
+            context: '',
+            scores: {
+                uncertainty: [3, 3, 3],
+                systems: [3, 3, 3],
+                agency: [3, 3, 3],
+                temporal: [3, 3, 3]
+            }
+        };
+    }
+
+    function dimAverage(key) {
+        const s = data.scores[key];
+        return (s[0] + s[1] + s[2]) / 3;
+    }
+
+    function overallAverage() {
+        const dims = DIMENSIONS.map(d => dimAverage(d.key));
+        return dims.reduce((a, b) => a + b, 0) / dims.length;
+    }
+
+    function interpretation(score) {
+        if (score <= 2.0) return 'Developing';
+        if (score <= 3.0) return 'Emerging';
+        if (score <= 4.0) return 'Proficient';
+        return 'Advanced';
+    }
+
+    // --- Render dimension cards ---
+    function renderDimensions() {
+        const panel = document.getElementById('dimensions-panel');
+        panel.innerHTML = DIMENSIONS.map(dim => {
+            const avg = dimAverage(dim.key);
+            const statementsHtml = dim.statements.map((stmt, si) => {
+                const val = data.scores[dim.key][si];
+                return `
+                    <div class="statement-row">
+                        <div class="statement-text">${stmt}</div>
+                        <div class="slider-wrapper">
+                            <div class="slider-track">
+                                <input type="range" min="1" max="5" value="${val}"
+                                    oninput="updateScore('${dim.key}', ${si}, parseInt(this.value))">
+                                <div class="slider-endpoints">
+                                    <span>Strongly disagree</span>
+                                    <span>Strongly agree</span>
+                                </div>
+                            </div>
+                            <div class="slider-value-display" id="val-${dim.key}-${si}">${val}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="dimension-card ${dim.cssClass}">
+                    <div class="dimension-header">
+                        <div class="dimension-name">${dim.name}</div>
+                        <div class="dimension-avg" id="avg-${dim.key}">${avg.toFixed(1)} <span class="dimension-avg-max">/ 5</span></div>
+                    </div>
+                    ${statementsHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function updateScore(dimKey, stmtIndex, value) {
+        data.scores[dimKey][stmtIndex] = value;
+
+        // Update value display
+        const valEl = document.getElementById(`val-${dimKey}-${stmtIndex}`);
+        if (valEl) valEl.textContent = value;
+
+        // Update dimension average
+        const avg = dimAverage(dimKey);
+        const avgEl = document.getElementById(`avg-${dimKey}`);
+        if (avgEl) avgEl.innerHTML = `${avg.toFixed(1)} <span class="dimension-avg-max">/ 5</span>`;
+
+        // Update overall score
+        updateOverallScore();
+
+        // Update radar chart
+        renderRadar();
+
+        autoSave();
+    }
+
+    function updateOverallScore() {
+        const score = overallAverage();
+        document.getElementById('overall-score-value').innerHTML =
+            `${score.toFixed(1)} <span class="overall-score-max">/ 5.0</span>`;
+        const interp = interpretation(score);
+        const interpEl = document.getElementById('overall-interpretation');
+        interpEl.textContent = interp;
+    }
+
+    // --- Radar chart SVG ---
+    function renderRadar() {
+        const container = document.getElementById('radar-container');
+        const size = 400;
+        const cx = size / 2;
+        const cy = size / 2;
+        const maxR = 150;
+        const labelOffset = 30;
+
+        // Axes: top (0), right (1), bottom (2), left (3)
+        // Angles: top = -90deg, right = 0deg, bottom = 90deg, left = 180deg
+        const angles = [-90, 0, 90, 180]; // degrees
+        const anglesRad = angles.map(a => a * Math.PI / 180);
+
+        function pointOnAxis(axisIndex, score) {
+            const r = (score / 5) * maxR;
+            const angle = anglesRad[axisIndex];
+            return {
+                x: cx + r * Math.cos(angle),
+                y: cy + r * Math.sin(angle)
+            };
+        }
+
+        let svg = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Grid lines (concentric diamond/rhombus shapes at 1,2,3,4,5)
+        for (let level = 1; level <= 5; level++) {
+            const pts = [];
+            for (let i = 0; i < 4; i++) {
+                const p = pointOnAxis(i, level);
+                pts.push(`${p.x},${p.y}`);
+            }
+            svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="#e2e8f0" stroke-width="${level === 5 ? 1.5 : 0.8}"/>`;
+
+            // Level number on first axis (top)
+            if (level < 5) {
+                const labelPt = pointOnAxis(0, level);
+                svg += `<text x="${labelPt.x + 8}" y="${labelPt.y + 4}" font-size="10" fill="#cbd5e1" font-family="Source Sans 3, sans-serif">${level}</text>`;
+            }
+        }
+
+        // Axis lines
+        for (let i = 0; i < 4; i++) {
+            const outer = pointOnAxis(i, 5);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${outer.x}" y2="${outer.y}" stroke="#e2e8f0" stroke-width="1"/>`;
+        }
+
+        // User score polygon
+        const dimKeys = ['uncertainty', 'systems', 'agency', 'temporal'];
+        const scores = dimKeys.map(k => dimAverage(k));
+        const scorePts = scores.map((s, i) => pointOnAxis(i, s));
+
+        const polygonPoints = scorePts.map(p => `${p.x},${p.y}`).join(' ');
+        svg += `<polygon points="${polygonPoints}" fill="rgba(43, 103, 119, 0.15)" stroke="rgba(43, 103, 119, 0.8)" stroke-width="2.5" stroke-linejoin="round"/>`;
+
+        // Score dots on polygon vertices with dimension colors
+        const dimColors = DIMENSIONS.map(d => d.color);
+        scorePts.forEach((p, i) => {
+            svg += `<circle cx="${p.x}" cy="${p.y}" r="6" fill="${dimColors[i]}" stroke="white" stroke-width="2"/>`;
+        });
+
+        // Score values near vertices
+        const scoreOffsets = [
+            { dx: 0, dy: -14, anchor: 'middle' },   // top
+            { dx: 14, dy: 4, anchor: 'start' },      // right
+            { dx: 0, dy: 18, anchor: 'middle' },     // bottom
+            { dx: -14, dy: 4, anchor: 'end' }        // left
+        ];
+        scorePts.forEach((p, i) => {
+            const off = scoreOffsets[i];
+            svg += `<text x="${p.x + off.dx}" y="${p.y + off.dy}" text-anchor="${off.anchor}" font-size="12" font-weight="700" fill="${dimColors[i]}" font-family="Source Sans 3, sans-serif">${scores[i].toFixed(1)}</text>`;
+        });
+
+        // Axis labels positioned outside
+        const labelPositions = [
+            { x: cx, y: cy - maxR - labelOffset, anchor: 'middle', dy: 0 },         // top
+            { x: cx + maxR + labelOffset, y: cy, anchor: 'start', dy: 4 },           // right
+            { x: cx, y: cy + maxR + labelOffset + 6, anchor: 'middle', dy: 0 },      // bottom
+            { x: cx - maxR - labelOffset, y: cy, anchor: 'end', dy: 4 }              // left
+        ];
+
+        const dimNames = DIMENSIONS.map(d => d.name);
+        labelPositions.forEach((pos, i) => {
+            svg += `<text x="${pos.x}" y="${pos.y + pos.dy}" text-anchor="${pos.anchor}" font-size="12" font-weight="600" fill="${dimColors[i]}" font-family="Source Sans 3, sans-serif">${dimNames[i]}</text>`;
+        });
+
+        // "5" label at top outer edge
+        const topOuter = pointOnAxis(0, 5);
+        svg += `<text x="${topOuter.x + 8}" y="${topOuter.y + 4}" font-size="10" fill="#cbd5e1" font-family="Source Sans 3, sans-serif">5</text>`;
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+    }
+
+    // --- Field change handler ---
+    function onFieldChange() {
+        data.context = document.getElementById('context-name').value;
+        autoSave();
+    }
+
+    // --- Auto-save with debounce ---
+    let saveTimeout;
+    function autoSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('visible');
+            setTimeout(() => indicator.classList.remove('visible'), 1500);
+        }, 500);
+    }
+
+    // --- Export PDF ---
+    function exportPDF() {
+        // Build print details
+        const details = document.getElementById('print-details');
+        details.innerHTML = '<h2 style="font-family: Crimson Pro, serif; font-size: 1.3rem; margin: 24px 0 16px;">Statement Scores</h2>' +
+            DIMENSIONS.map(dim => {
+                const avg = dimAverage(dim.key);
+                const rows = dim.statements.map((stmt, si) => {
+                    const val = data.scores[dim.key][si];
+                    return `<div style="margin-bottom: 6px; font-size: 0.9rem;"><span style="color: ${dim.color}; font-weight: 700;">${val}/5</span> &mdash; ${stmt}</div>`;
+                }).join('');
+                return `<div style="break-inside: avoid; border: 1px solid #ccc; border-left: 4px solid ${dim.color}; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                    <div style="font-family: Crimson Pro, serif; font-size: 1.1rem; font-weight: 600; color: ${dim.color}; margin-bottom: 10px;">${dim.name} <span style="float: right; font-size: 1.2rem;">${avg.toFixed(1)} / 5</span></div>
+                    ${rows}
+                </div>`;
+            }).join('') +
+            `<div style="text-align: center; margin-top: 16px; font-size: 1rem; color: var(--text-secondary);">Overall: <strong>${overallAverage().toFixed(1)} / 5.0</strong> &mdash; ${interpretation(overallAverage())}</div>`;
+
+        setTimeout(() => window.print(), 100);
+    }
+
+    // --- Export JSON ---
+    function exportJSON() {
+        const exportData = {
+            context: data.context,
+            dimensions: DIMENSIONS.map(dim => ({
+                key: dim.key,
+                name: dim.name,
+                statements: dim.statements.map((stmt, si) => ({
+                    statement: stmt,
+                    score: data.scores[dim.key][si]
+                })),
+                average: parseFloat(dimAverage(dim.key).toFixed(2))
+            })),
+            overallScore: parseFloat(overallAverage().toFixed(2)),
+            interpretation: interpretation(overallAverage())
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'future-readiness.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // --- Clear All ---
+    function clearAll() {
+        if (!confirm('Clear all data? This cannot be undone.')) return;
+        data = getDefaultData();
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('context-name').value = '';
+        renderDimensions();
+        renderRadar();
+        updateOverallScore();
+    }
+
+    // --- Load ---
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Merge with defaults to handle missing keys
+                data.context = parsed.context || '';
+                if (parsed.scores) {
+                    DIMENSIONS.forEach(dim => {
+                        if (parsed.scores[dim.key] && Array.isArray(parsed.scores[dim.key])) {
+                            data.scores[dim.key] = parsed.scores[dim.key].map(v => {
+                                const n = parseInt(v);
+                                return (n >= 1 && n <= 5) ? n : 3;
+                            });
+                            // Ensure exactly 3 entries
+                            while (data.scores[dim.key].length < 3) data.scores[dim.key].push(3);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Failed to load saved data');
+            }
+        }
+
+        document.getElementById('context-name').value = data.context;
+        renderDimensions();
+        renderRadar();
+        updateOverallScore();
+    }
+
+    load();
+    </script>
+</body>
+</html>

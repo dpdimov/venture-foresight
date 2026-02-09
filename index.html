@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venture Foresight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./shared.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --accent-1: #c05929;
+            --accent-2: #2b6777;
+            --accent-3: #8b5e3c;
+            --accent-4: #6a7b4a;
+            --accent-5: #7c5295;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-accent);
+            opacity: 0.8;
+        }
+
+        .tool-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--card-accent);
+        }
+
+        .tool-card.problem { --card-accent: var(--accent-1); }
+        .tool-card.persona { --card-accent: var(--accent-2); }
+        .tool-card.futures { --card-accent: var(--accent-4); }
+        .tool-card.scenario { --card-accent: var(--accent-5); }
+        .tool-card.cone { --card-accent: var(--accent-3); }
+        .tool-card.triangle { --card-accent: #3a8a6e; }
+        .tool-card.readiness { --card-accent: #5a7ca8; }
+        .tool-card.cla { --card-accent: #4a7c8a; }
+
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .tool-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .tool-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .tool-tag {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--card-accent);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 40px 16px;
+            }
+
+            .tool-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <div class="nav-container">
+            <a href="./" class="nav-brand">Venture Foresight</a>
+            <ul class="nav-links">
+                <li><a href="./" class="active">Home</a></li>
+                <li><a href="./problem-solution-fit/">Problem-Solution Fit</a></li>
+                <li><a href="./customer-persona/">Customer Persona</a></li>
+                <li><a href="./futures-wheel/">Futures Wheel</a></li>
+                <li><a href="./scenario-planning/">Scenario Planning</a></li>
+                <li><a href="./cone-of-plausibility/">Cone of Plausibility</a></li>
+                <li><a href="./futures-triangle/">Futures Triangle</a></li>
+                <li><a href="./future-readiness/">Future Readiness</a></li>
+                <li><a href="./causal-layered-analysis/">Causal Layered Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Venture Foresight</h1>
+            <p class="subtitle">Interactive tools for strategic foresight, venture discovery, and navigating uncertainty</p>
+        </header>
+
+        <div class="tools-grid">
+            <a href="./problem-solution-fit/" class="tool-card problem">
+                <div class="tool-icon">🎯</div>
+                <h2 class="tool-title">Problem-Solution Fit</h2>
+                <p class="tool-description">Define market problems clearly, then outline solution blueprints. Map pain points to product components and identify differentiation from alternatives.</p>
+                <span class="tool-tag">Discovery</span>
+            </a>
+
+            <a href="./customer-persona/" class="tool-card persona">
+                <div class="tool-icon">👤</div>
+                <h2 class="tool-title">Customer Persona</h2>
+                <p class="tool-description">Develop concrete illustrations of your target customers. Capture goals, frustrations, behaviours, and narratives that bring personas to life.</p>
+                <span class="tool-tag">Customers</span>
+            </a>
+
+            <a href="./futures-wheel/" class="tool-card futures">
+                <div class="tool-icon">🔮</div>
+                <h2 class="tool-title">Futures Wheel</h2>
+                <p class="tool-description">Explore the cascading implications of a trend or change. Map first, second, and third-order effects in a structured radial layout.</p>
+                <span class="tool-tag">Foresight</span>
+            </a>
+
+            <a href="./scenario-planning/" class="tool-card scenario">
+                <div class="tool-icon">🗺️</div>
+                <h2 class="tool-title">Scenario Planning</h2>
+                <p class="tool-description">Develop narrative scenarios around two key uncertainty dimensions. Build a 2x2 matrix of possible futures with signals, implications, and strategic responses.</p>
+                <span class="tool-tag">Strategy</span>
+            </a>
+
+            <a href="./cone-of-plausibility/" class="tool-card cone">
+                <div class="tool-icon">🎯</div>
+                <h2 class="tool-title">Cone of Plausibility</h2>
+                <p class="tool-description">Map futures across concentric zones — from projected to preposterous — and position your preferred future within the landscape of possibilities.</p>
+                <span class="tool-tag">Foresight</span>
+            </a>
+
+            <a href="./futures-triangle/" class="tool-card triangle">
+                <div class="tool-icon">🔺</div>
+                <h2 class="tool-title">Futures Triangle</h2>
+                <p class="tool-description">Explore the interplay of three forces shaping the future: the push of the present, the pull of the future, and the weight of the past.</p>
+                <span class="tool-tag">Foresight</span>
+            </a>
+
+            <a href="./future-readiness/" class="tool-card readiness">
+                <div class="tool-icon">🧭</div>
+                <h2 class="tool-title">Future Readiness</h2>
+                <p class="tool-description">Self-assess your readiness across four dimensions: uncertainty tolerance, systems awareness, agency orientation, and temporal flexibility.</p>
+                <span class="tool-tag">Assessment</span>
+            </a>
+
+            <a href="./causal-layered-analysis/" class="tool-card cla">
+                <div class="tool-icon">🧊</div>
+                <h2 class="tool-title">Causal Layered Analysis</h2>
+                <p class="tool-description">Unpack issues through four layers — from surface litany through systemic causes and worldviews to deep myths and metaphors — then reimagine from the bottom up.</p>
+                <span class="tool-tag">Foresight</span>
+            </a>
+        </div>
+
+        <footer>
+            <p>Dimo Dimov | Venture Foresight Tools</p>
+        </footer>
+    </div>
+</body>
+</html>
