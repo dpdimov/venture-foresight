@@ -1,5 +1,5 @@
 {
-  "name": "entrepreneurial-journey",
+  "name": "venture-foresight",
   "private": true,
   "scripts": {
     "build": "node build.js"
